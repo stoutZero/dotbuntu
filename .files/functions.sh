@@ -1,4 +1,7 @@
 # .functions
+
+function _completemarks { reply=($(ls $MARKPATH)) }
+
 # Simple calculator
 function calc() {
   local result="";
@@ -17,37 +20,41 @@ function calc() {
   printf "\n";
 }
 
-# Create a new directory and enter it
-function mkd() {
-  mkdir -p "$@" && cd "$@";
+# Get a character’s Unicode code point
+function codepoint() {
+  perl -e "use utf8; print sprintf('U+%04X', ord(\"$@\"))";
+  # print a newline unless we’re piping the output to another program
+  if [ -t 1 ]; then
+    echo ""; # newline
+  fi;
 }
 
-# Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
-function targz() {
-  local tmpFile="${@%/}.tar";
-  tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1;
+# Create a data URL from a file
+function dataurl() {
+  local mimeType=$(file -b --mime-type "$1");
+  if [[ $mimeType == text/* ]]; then
+    mimeType="${mimeType};charset=utf-8";
+  fi
+  echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')";
+}
 
-  size=$(
-    stat -f"%z" "${tmpFile}" 2> /dev/null; # OS X `stat`
-    stat -c"%s" "${tmpFile}" 2> /dev/null # GNU `stat`
-  );
+# Run `dig` and display the most useful info
+function digga() {
+  dig +nocmd "$1" any +multiline +noall +answer;
+}
 
-  local cmd="";
-  if (( size < 52428800 )) && hash zopfli 2> /dev/null; then
-    # the .tar file is smaller than 50 MB and Zopfli is available; use it
-    cmd="zopfli";
-  else
-    if hash pigz 2> /dev/null; then
-      cmd="pigz";
-    else
-      cmd="gzip";
-    fi;
+# Use Git’s colored diff when available
+function diff() {
+  git diff --no-index --color-words "$@";
+}
+
+# UTF-8-encode a string of Unicode symbols
+function escape() {
+  printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u);
+  # print a newline unless we’re piping the output to another program
+  if [ -t 1 ]; then
+    echo ""; # newline
   fi;
-
-  echo "Compressing .tar using \`${cmd}\`…";
-  "${cmd}" -v "${tmpFile}" || return 1;
-  [ -f "${tmpFile}" ] && rm "${tmpFile}";
-  echo "${tmpFile}.gz created successfully.";
 }
 
 # Determine size of a file or total size of a directory
@@ -61,83 +68,6 @@ function fs() {
     du $arg -- "$@";
   else
     du $arg .[^.]* *;
-  fi;
-}
-
-# Use Git’s colored diff when available
-hash git &>/dev/null;
-if [ $? -eq 0 ]; then
-  function diff() {
-    git diff --no-index --color-words "$@";
-  }
-fi;
-
-# Create a data URL from a file
-function dataurl() {
-  local mimeType=$(file -b --mime-type "$1");
-  if [[ $mimeType == text/* ]]; then
-    mimeType="${mimeType};charset=utf-8";
-  fi
-  echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')";
-}
-
-# Create a git.io short URL
-function gitio() {
-  if [ -z "${1}" -o -z "${2}" ]; then
-    echo "Usage: \`gitio slug url\`";
-    return 1;
-  fi;
-  curl -i http://git.io/ -F "url=${2}" -F "code=${1}";
-}
-
-# Compare original and gzipped file size
-function gz() {
-  local origsize=$(wc -c < "$1");
-  local gzipsize=$(gzip -c "$1" | wc -c);
-  local ratio=$(echo "$gzipsize * 100 / $origsize" | bc -l);
-  printf "orig: %d bytes\n" "$origsize";
-  printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
-}
-
-# Syntax-highlight JSON strings or files
-# Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
-function json() {
-  if [ -t 0 ]; then # argument
-    python -mjson.tool <<< "$*" | pygmentize -l javascript;
-  else # pipe
-    python -mjson.tool | pygmentize -l javascript;
-  fi;
-}
-
-# Run `dig` and display the most useful info
-function digga() {
-  dig +nocmd "$1" any +multiline +noall +answer;
-}
-
-# UTF-8-encode a string of Unicode symbols
-function escape() {
-  printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u);
-  # print a newline unless we’re piping the output to another program
-  if [ -t 1 ]; then
-    echo ""; # newline
-  fi;
-}
-
-# Decode \x{ABCD}-style Unicode escape sequences
-function unidecode() {
-  perl -e "binmode(STDOUT, ':utf8'); print \"$@\"";
-  # print a newline unless we’re piping the output to another program
-  if [ -t 1 ]; then
-    echo ""; # newline
-  fi;
-}
-
-# Get a character’s Unicode code point
-function codepoint() {
-  perl -e "use utf8; print sprintf('U+%04X', ord(\"$@\"))";
-  # print a newline unless we’re piping the output to another program
-  if [ -t 1 ]; then
-    echo ""; # newline
   fi;
 }
 
@@ -175,59 +105,70 @@ function getcertnames() {
   fi;
 }
 
-# `v` with no arguments opens the current directory in Vim, otherwise opens the
-# given location
-function v() {
-  if [ $# -eq 0 ]; then
-    vim .;
+# Create a git.io short URL
+function gitio() {
+  if [ -z "${1}" -o -z "${2}" ]; then
+    echo "Usage: \`gitio slug url\`";
+    return 1;
+  fi;
+  curl -i http://git.io/ -F "url=${2}" -F "code=${1}";
+}
+
+# Compare original and gzipped file size
+function gz() {
+  local origsize=$(wc -c < "$1");
+  local gzipsize=$(gzip -c "$1" | wc -c);
+  local ratio=$(echo "$gzipsize * 100 / $origsize" | bc -l);
+  printf "orig: %d bytes\n" "$origsize";
+  printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
+}
+
+function hrb() {
+  if [ "$#" -gt 0 ]; then
+    input=$(prinft %s "$@")
   else
-    vim "$@";
+    input=$1
+  fi
+
+  echo $(numfmt --to=iec-i --suffix=B --padding=7 $input)
+}
+
+# Syntax-highlight JSON strings or files
+# Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
+function json() {
+  if [ -t 0 ]; then # argument
+    python3 -mjson.tool <<< "$*" | pygmentize -l javascript;
+  else # pipe
+    python3 -mjson.tool | pygmentize -l javascript;
   fi;
 }
 
-# `o` with no arguments opens the current directory, otherwise opens the given
-# location
-function o() {
-  if [ $# -eq 0 ]; then
-    open .;
-  else
-    open "$@";
-  fi;
+function jump {
+  pushd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
 }
 
-# `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
-# the `.git` directory, listing directories first. The output gets piped into
-# `less` with options to preserve color and line numbers, unless the output is
-# small enough for one screen.
-function tre() {
-  tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX;
+function mark {
+  mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
 }
+
+function marks {
+  \ls -l "$MARKPATH" | tail -n +2 | sed 's/  / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %s\n", $1, $2}'
+}
+
+# Create a new directory and enter it
+function mkd() {
+  mkdir -p "$@" && cd "$@";
+}
+
+function netsize {
+  local _size=$(curl -sIL $1 | grep -i '^Content-Length: ' | cut -d' ' -f2 | tr -d '\r')
+  local human=$(hrb $_size | tr -d '[:space:]')
+
+  printf "%d bytes • ${human}\n" "${_size}"
+}
+
 function npmls() {
   (npm ls --depth=0 "$@" | sed "s/[├─┬]//g") 2>/dev/null
-}
-function hrb() {
-  # Convert input parameter (number of bytes) 
-  # to Human Readable form
-  SLIST=(bytes KiB MiB GiB TiB PiB EiB ZiB YiB)
-  POWER=1
-  VAL=$( echo "scale=2; $1 / 1" | bc )  
-  VINT=$( echo $VAL / 1024 | bc )
-  while (( $VINT > 0 ))
-  do
-    let POWER=POWER+1
-    VAL=$( echo "scale=2; $VAL / 1024" | bc)
-    VINT=$( echo $VAL / 1024 | bc )
-  done
-  echo $VAL${SLIST[$POWER]}
-}
-
-# Start an HTTP server from a directory, optionally specifying the port
-function server {
-  local port="${1:-8000}";
-  sleep 1 && open "http://localhost:${port}/" &
-  # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
-  # And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
-  python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
 # Start a PHP server from a directory, optionally specifying the port
@@ -239,23 +180,71 @@ function phpserver {
   php -S "${ip}:${port}";
 }
 
-function jump {
-  pushd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
-}
-function mark {
-  mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
-}
-function unmark {
-  rm -i "$MARKPATH/$1"
-}
-function marks {
-  \ls -l "$MARKPATH" | tail -n +2 | sed 's/  / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %s\n", $1, $2}'
+function reload { sudo service $1 reload }
+
+function restart { sudo service $1 restart }
+
+# Start an HTTP server from a directory, optionally specifying the port
+function server {
+  local port="${1:-8000}";
+
+  # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
+  # And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
+  python3 -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
-function _completemarks {
-  reply=($(ls $MARKPATH))
+function start { sudo service $1 start }
+
+function status { sudo service $1 status }
+
+function stop { sudo service $1 stop }
+
+# Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
+function targz() {
+  local tmpFile="${@%/}.tar";
+  tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1;
+
+  # GNU `stat`
+  size=$(stat -c"%s" "${tmpFile}" 2> /dev/null);
+
+  local cmd="";
+  if (( size < 52428800 )) && hash zopfli 2> /dev/null; then
+    # the .tar file is smaller than 50 MB and Zopfli is available; use it
+    cmd="zopfli";
+  else
+    if hash pigz 2> /dev/null; then
+      cmd="pigz";
+    else
+      cmd="gzip";
+    fi;
+  fi;
+
+  echo "Compressing .tar using \`${cmd}\`…";
+  "${cmd}" -v "${tmpFile}" || return 1;
+  [ -f "${tmpFile}" ] && rm "${tmpFile}";
+  echo "${tmpFile}.gz created successfully.";
+}
+
+# `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
+# the `.git` directory, listing directories first. The output gets piped into
+# `less` with options to preserve color and line numbers, unless the output is
+# small enough for one screen.
+function tre() {
+  tree -aC -I '.git|bower_components|node_modules|vendor' --dirsfirst "$@" | less -FRNX;
+}
+
+# Decode \x{ABCD}-style Unicode escape sequences
+function unidecode() {
+  perl -e "binmode(STDOUT, ':utf8'); print \"$@\"";
+  # print a newline unless we’re piping the output to another program
+  if [ -t 1 ]; then
+    echo ""; # newline
+  fi;
+}
+
+function unmark {
+  rm -i "$MARKPATH/$1"
 }
 
 compctl -K _completemarks jump
 compctl -K _completemarks unmark
-
