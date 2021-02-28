@@ -28,11 +28,11 @@ alias fire='dig +short -t txt istheinternetonfire.com'
 alias fuck='$(thefuck $(fc -ln -1))'
 alias FUCK='fuck'
 
-alias g='git '
-alias gaa='git add .'
-alias gcm='git commit -m '
+alias g='\git '
+alias gaa='\git add .'
+alias gcm='\git commit -m '
 alias grep='grep -i --color=auto '
-alias gp='git push'
+alias gp='\git push'
 
 alias h="fc -l 1"
 
