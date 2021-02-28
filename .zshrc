@@ -44,7 +44,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in $ZSH/plugins/*)
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(colored-man colorize encode64 git)
+plugins=(colored-man colorize encode64 git nice-exit-code)
 
 [[ -s $ZSH/oh-my-zsh.sh ]] && . $ZSH/oh-my-zsh.sh # Load oh-my-zsh, if exists
 
@@ -56,9 +56,11 @@ plugins=(colored-man colorize encode64 git)
 
 [[ -f ~/.liquidprompt ]] && . ~/.liquidprompt
 
-# Aliases, including my custom ones
-source ~/.files/.aliases
-
-# Customize to your needs...
-source ~/.files/.functions
-source ~/.files/.exports
+# Load the shell dotfiles, and then some:
+# * $HOME/.path can be used to extend `$PATH`.
+# * $HOME/.extra can be used for other settings you don’t want to commit.
+for file in $HOME/.files/{exports,path,prompt,aliases,functions,extra}.sh;
+do
+  [ -r "$file" ] && [ -f "$file" ] && source "$file";
+done;
+unset file

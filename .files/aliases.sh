@@ -4,7 +4,6 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....="cd ../../../.."
 alias a='php artisan'
-alias b='brew'
 alias c='composer '
 alias cela='clear; els -l -a -h '
 alias cla='clear; ls -lash '
@@ -13,43 +12,40 @@ alias dfh='df -h '
 alias ducks='du -cksh * | sort -rn | head '
 alias duh='du -h '
 alias edit=$EDITOR' '
+alias ela='els -l -a -h '
 alias empty='echo "" > '
 alias fire='dig +short -t txt istheinternetonfire.com'
 alias fuck='$(thefuck $(fc -ln -1))'
 alias FUCK='fuck'
-
+alias g="git"
 alias grep='grep -i --color=auto '
-alias k9='kill -9 '
 alias gx='ansible-galaxy'
+alias h="fc -l 1"
+alias history="history"
 alias hs='fc -l 1 | grep --color=auto'
-
+alias j="jobs"
+alias k9='kill -9 '
 alias lla='ls -lash '
 alias lns='ln -s'
-alias ela='els -l -a -h '
-alias nn='nano '
-alias ne='node -e '
-alias nls='npm ls '
-alias ni='npm install '
-alias nu='npm un '
 alias mkdir='mkdir -p '
-alias myip='dig +short myip.opendns.com @resolver1.opendns.com'
 alias mv='mv '
-alias pls='sudo '
+alias myip='dig +short myip.opendns.com @resolver1.opendns.com'
+alias ne='node -e '
+alias ni='npm install '
+alias nls='npm ls '
+alias nn='nano '
+alias nu='npm un '
+alias pgf='pgrep -f '
 alias play='ansible-playbook '
+alias pls='sudo '
 alias psg='ps aux | grep $(echo $1 | sed "s/^\(.\)/[\1]/g")'
 alias psx='ps aux '
-alias pgf='pgrep -f '
 alias rmf='rm -f '
 alias ssh='ssh -o TCPKeepAlive=yes '
 alias sudo='nocorrect sudo '
-alias tln='tail -n '
 alias tlf='tail -f '
+alias tln='tail -n '
 alias wget='wget --no-check-certificate '
-
-alias g="git"
-alias h="fc -l 1"
-alias history="history"
-alias j="jobs"
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`

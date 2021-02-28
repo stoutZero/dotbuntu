@@ -1,16 +1,19 @@
 # .exports
 
 # Make vim the default editor
-export EDITOR="vim";
+export EDITOR="nano";
 
-export HOMEBREW_GITHUB_API_TOKEN=$(cat $HOME/.github-token)
+export HOMEBREW_GITHUB_API_TOKEN=$(\
+  [ -f $HOME/.github-token ] && cat $HOME/.github-token || echo ''\
+)
 
 # Larger bash history (allow 32³ entries; default is 500)
 export HISTSIZE=32768;
 export HISTFILESIZE=$HISTSIZE;
 export HISTCONTROL=ignoredups;
+
 # Make some commands not show up in history
-export HISTIGNORE="exit:date:* --help:[ \t]:clear:history";
+export HISTIGNORE="exit:date:clear:history";
 
 # Prefer US English and use UTF-8
 export LANG="en_US.UTF-8";
@@ -22,7 +25,5 @@ export LESS_TERMCAP_md="${yellow}";
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X";
 
-# Always enable colored `grep` output
-export GREP_OPTIONS="--color=auto";
 export PATH=/opt/gitlab/embedded/bin/:$PATH
 export PROMPT_COMMAND='echo -ne "\033]0;$PWD\007"'

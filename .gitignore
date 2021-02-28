@@ -9,7 +9,7 @@
 !contributors.txt
 !.gitignore
 !.zshrc
-!.aliases
-!.exports
-!.functions
+
+!/.files/
+!/.files/*
 
