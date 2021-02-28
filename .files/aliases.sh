@@ -22,7 +22,7 @@ alias duh='du -h '
 alias edit=$EDITOR' '
 
 alias ela='els -l -a -h '
-alias empty='echo "" > '
+alias empty='cat /dev/null > '
 
 alias fire='dig +short -t txt istheinternetonfire.com'
 alias fuck='$(thefuck $(fc -ln -1))'
