@@ -16,13 +16,12 @@ alias cla='clear; ls -lash '
 alias clone='git clone '
 
 alias dfh='df -h '
-alias ducks='du -cksh * | sort -rn | head '
 alias duh='du -h '
 
 alias edit=$EDITOR' '
 
 alias ela='els -l -a -h '
-alias empty='cat /dev/null > '
+alias empty='truncate -s0 '
 
 alias fire='dig +short -t txt istheinternetonfire.com'
 alias fuck='$(thefuck $(fc -ln -1))'

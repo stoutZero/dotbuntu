@@ -43,6 +43,8 @@ function digga() {
   dig +nocmd "$1" any +multiline +noall +answer;
 }
 
+function ducks { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
+
 # Use Git’s colored diff when available
 function diff() {
   git diff --no-index --color-words "$@";
@@ -180,9 +182,9 @@ function phpserver {
   php -S "${ip}:${port}";
 }
 
-function reload { sudo service $1 reload }
+function reload { sudo service $1 reload; }
 
-function restart { sudo service $1 restart }
+function restart { sudo service $1 restart; }
 
 # Start an HTTP server from a directory, optionally specifying the port
 function server {
@@ -193,11 +195,11 @@ function server {
   python3 -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
-function start { sudo service $1 start }
+function start { sudo service $1 start; }
 
-function status { sudo service $1 status }
+function status { sudo service $1 status; }
 
-function stop { sudo service $1 stop }
+function stop { sudo service $1 stop; }
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 function targz() {
