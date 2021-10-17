@@ -182,9 +182,9 @@ function phpserver {
   php -S "${ip}:${port}";
 }
 
-function reload { sudo service $1 reload; }
+function reload { sudo systemctl reload $1 }
 
-function restart { sudo service $1 restart; }
+function restart { sudo systemctl restart $1 }
 
 # Start an HTTP server from a directory, optionally specifying the port
 function server {
@@ -195,11 +195,11 @@ function server {
   python3 -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
-function start { sudo service $1 start; }
+function start { sudo systemctl start $1 }
 
-function status { sudo service $1 status; }
+function status { sudo systemctl status $1 }
 
-function stop { sudo service $1 stop; }
+function stop { sudo systemctl stop $1 }
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 function targz() {

@@ -1,6 +1,6 @@
 # .exports
 
-# Make vim the default editor
+# Make nano the default editor
 export EDITOR="nano";
 
 # Larger bash history (allow 32³ entries; default is 500)
@@ -31,4 +31,4 @@ export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X";
 
-export PROMPT_COMMAND='echo -ne "\033]0;$PWD\007"'
+export PROMPT_COMMAND='echo -ne "$(nice_exit_code) \033]0;$PWD\007"'
