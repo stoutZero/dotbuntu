@@ -24,8 +24,6 @@ alias ela='els -l -a -h '
 alias empty='truncate -s0 '
 
 alias fire='dig +short -t txt istheinternetonfire.com'
-alias fuck='$(thefuck $(fc -ln -1))'
-alias FUCK='fuck'
 
 alias g='\git '
 alias gaa='\git add .'
@@ -56,14 +54,13 @@ alias mkdir='mkdir -p '
 alias mv='mv '
 alias myip='dig +short myip.opendns.com @resolver1.opendns.com'
 
+alias ngd='sudo nginx -s stop'
+alias ngr='sudo nginx -s reload'
+alias ngt='sudo nginx -t'
+
 alias ne='node -e '
-alias nd='sudo nginx -s stop'
-alias ni='npm install '
 alias nls='npm ls '
 alias nn='nano '
-alias nr='sudo nginx -s reload'
-alias nu='npm un '
-alias nt='sudo nginx -t'
 
 alias pgf='pgrep -f '
 alias po='popd '

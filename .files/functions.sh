@@ -107,15 +107,6 @@ function getcertnames() {
   fi;
 }
 
-# Create a git.io short URL
-function gitio() {
-  if [ -z "${1}" -o -z "${2}" ]; then
-    echo "Usage: \`gitio slug url\`";
-    return 1;
-  fi;
-  curl -i http://git.io/ -F "url=${2}" -F "code=${1}";
-}
-
 # Compare original and gzipped file size
 function gz() {
   local origsize=$(wc -c < "$1");
@@ -225,6 +216,68 @@ function targz() {
   "${cmd}" -v "${tmpFile}" || return 1;
   [ -f "${tmpFile}" ] && rm "${tmpFile}";
   echo "${tmpFile}.gz created successfully.";
+}
+
+# Create a .tar.br archive, using `brotli` for compression
+function tarbr {
+  if [ $# -eq 0 ];then
+    printf "No arguments specified.\nUsage:\n tarbr <directory> <COMPRESSION: 1..11>">&2
+
+    return 1
+  fi
+
+  if [ ! -d "$1" ];then
+    echo "Error: $1 is not a valid folder" 2>&1
+
+    return 1
+  fi
+
+  local outFile="${1}.tar.br";
+
+  _z="${2:-11}"
+
+  _cmd="tar cf - ${1} | brotli";
+
+  if [ "x11" != "x${_z}" ]; then
+    _cmd="${_cmd} -${_z}"
+  fi
+
+  _cmd="${_cmd} > ${outFile}"
+
+  echo -n "Compressing '${1}' into '${outFile}' with brotli, compression level: ${_z}... ";
+
+  eval $_cmd
+
+  echo "DONE";
+}
+
+# Create a .tar.zst archive, using `zstd` for compression
+function tarzst {
+  if [ $# -eq 0 ];then
+    printf "No arguments specified.\nUsage:\n tarzst <directory> <CORES: 1..N> <COMPRESSION: 1..19>">&2
+
+    return 1
+  fi
+
+  if [ ! -d "$1" ];then
+    echo "Error: $1 is not a valid folder" 2>&1
+
+    return 1
+  fi
+
+  local outFile="${1}.tar.zst";
+
+  _c="${2:-1}"
+  _z="${3:-3}"
+
+  _zst="zstd -T${_c} -z -${_z}"
+  _cmd="tar cf - '${1}' | ${_zst} > '${outFile}'";
+
+  echo -n "Compressing '${1}' into '${outFile}' with zstd (cores: ${_c}, comp: ${_z})... ";
+
+  eval $_cmd
+
+  echo "DONE";
 }
 
 # `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring

@@ -7,7 +7,7 @@ if ! command -v zsh > /dev/null 2>&1 ; then
   sudo apt install -y zsh
 fi
 
-git clone https://github.com/bric3/nice-exit-code "${ZSH_CUSTOM}/plugins/nice-exit-code"
+git clone https://github.com/bric3/nice-exit-code "${HOME}/.zshd/custom/plugins/nice-exit-code"
 
 if [ $(basename $SHELL) != "zsh" ]; then
   chsh -s $(command -v zsh)
