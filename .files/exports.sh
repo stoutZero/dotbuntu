@@ -32,3 +32,9 @@ export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40
 export MANPAGER="less -X";
 
 export PROMPT_COMMAND='echo -ne "$(nice_exit_code) \033]0;$PWD\007"'
+
+export DISCORD_WEBHOOK=$(\
+  [ -f $HOME/.discord.url ] && (\
+    cat $HOME/.discord.url  | tr -d '\r' | tr -d '\n'\
+  ) || echo ''\
+)

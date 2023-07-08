@@ -2,6 +2,8 @@
 
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.zshd
+ZSHDOT=$HOME/.zshd
+ZDOT=$HOME/.zshd
 
 # Set name of the theme to load.
 # Look in $ZSH/themes/
@@ -44,7 +46,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in $ZSH/plugins/*)
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(colored-man-pages colorize encode64 git nice-exit-code)
+plugins=(colored-man-pages colorize encode64 git nvm npm nice-exit-code)
 
 [[ -s $ZSH/oh-my-zsh.sh ]] && . $ZSH/oh-my-zsh.sh # Load oh-my-zsh, if exists
 
@@ -64,3 +66,4 @@ do
   [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

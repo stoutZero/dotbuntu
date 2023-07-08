@@ -1,9 +1,19 @@
 # .functions
 
-function _completemarks { reply=($(ls $MARKPATH)) }
+_completemarks () { reply=($(ls $MARKPATH)) }
+
+ee () {
+  if [ "x" = "x${1}" ]; then
+    echo "No file supplied, exiting."
+  	exit 1
+  fi
+
+  truncate -s0 "${1}"
+  $EDITOR "${1}"
+}
 
 # Simple calculator
-function calc() {
+calc () {
   local result="";
   result="$(printf "scale=10;$*\n" | bc --mathlib | tr -d '\\\n')";
   #                       └─ default (when `--mathlib` is used) is 20
@@ -21,7 +31,7 @@ function calc() {
 }
 
 # Get a character’s Unicode code point
-function codepoint() {
+codepoint () {
   perl -e "use utf8; print sprintf('U+%04X', ord(\"$@\"))";
   # print a newline unless we’re piping the output to another program
   if [ -t 1 ]; then
@@ -30,7 +40,7 @@ function codepoint() {
 }
 
 # Create a data URL from a file
-function dataurl() {
+dataurl () {
   local mimeType=$(file -b --mime-type "$1");
   if [[ $mimeType == text/* ]]; then
     mimeType="${mimeType};charset=utf-8";
@@ -38,20 +48,52 @@ function dataurl() {
   echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')";
 }
 
+# http://www.cyberciti.biz/tips/unix-linux-bash-shell-script-wrapper-examples.html
+# Name: _getdomainnameonly
+# Arg: Url/domain/ip
+# Returns: Only domain name
+# Purpose: Get domain name and remove protocol part, username:password and other parts from url
+_domainname () {
+  # get url
+  local h="$1"
+
+  # upper to lowercase
+  # shellcheck disable=SC2155
+  local f="$(echo "$h" | tr '[:upper:]' '[:lower:]')"
+
+  # remove protocol part of hostname
+  f="${f#http://}"
+  f="${f#https://}"
+  f="${f#ftp://}"
+  f="${f#scp://}"
+  f="${f#scp://}"
+  f="${f#sftp://}"
+
+  # Remove username and/or username:password part of hostname
+  f="${f#*:*@}"
+  f="${f#*@}"
+
+  # remove all /foo/xyz.html*
+  f=${f%%/*}
+
+  # show domain name only
+  echo "$f"
+}
+
 # Run `dig` and display the most useful info
-function digga() {
+digga () {
   dig +nocmd "$1" any +multiline +noall +answer;
 }
 
-function ducks { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
+ducks () { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
 
 # Use Git’s colored diff when available
-function diff() {
+diff () {
   git diff --no-index --color-words "$@";
 }
 
 # UTF-8-encode a string of Unicode symbols
-function escape() {
+escape () {
   printf "\\\x%s" $(printf "$@" | xxd -p -c1 -u);
   # print a newline unless we’re piping the output to another program
   if [ -t 1 ]; then
@@ -60,7 +102,7 @@ function escape() {
 }
 
 # Determine size of a file or total size of a directory
-function fs() {
+fs () {
   if du -b /dev/null > /dev/null 2>&1; then
     local arg=-sbh;
   else
@@ -75,7 +117,7 @@ function fs() {
 
 # Show all the names (CNs and SANs) listed in the SSL certificate
 # for a given domain
-function getcertnames() {
+getcertnames () {
   if [ -z "${1}" ]; then
     echo "ERROR: No domain specified.";
     return 1;
@@ -108,7 +150,7 @@ function getcertnames() {
 }
 
 # Compare original and gzipped file size
-function gz() {
+gz () {
   local origsize=$(wc -c < "$1");
   local gzipsize=$(gzip -c "$1" | wc -c);
   local ratio=$(echo "$gzipsize * 100 / $origsize" | bc -l);
@@ -116,7 +158,7 @@ function gz() {
   printf "gzip: %d bytes (%2.2f%%)\n" "$gzipsize" "$ratio";
 }
 
-function hrb() {
+hrb () {
   if [ "$#" -gt 0 ]; then
     input=$(prinft %s "$@")
   else
@@ -128,7 +170,7 @@ function hrb() {
 
 # Syntax-highlight JSON strings or files
 # Usage: `json '{"foo":42}'` or `echo '{"foo":42}' | json`
-function json() {
+json () {
   if [ -t 0 ]; then # argument
     python3 -mjson.tool <<< "$*" | pygmentize -l javascript;
   else # pipe
@@ -136,49 +178,49 @@ function json() {
   fi;
 }
 
-function jump {
+jump () {
   pushd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
 }
 
-function mark {
+mark () {
   mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
 }
 
-function marks {
+marks () {
   \ls -l "$MARKPATH" | tail -n +2 | sed 's/  / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %s\n", $1, $2}'
 }
 
 # Create a new directory and enter it
-function mkd() {
+mkd () {
   mkdir -p "$@" && cd "$@";
 }
 
-function netsize {
+netsize () {
   local _size=$(curl -sIL $1 | grep -i '^Content-Length: ' | cut -d' ' -f2 | tr -d '\r')
   local human=$(hrb $_size | tr -d '[:space:]')
 
   printf "%d bytes • ${human}\n" "${_size}"
 }
 
-function npmls() {
+npmls () {
   (npm ls --depth=0 "$@" | sed "s/[├─┬]//g") 2>/dev/null
 }
 
 # Start a PHP server from a directory, optionally specifying the port
 # (Requires PHP 5.4.0+.)
-function phpserver {
+phpserver () {
   local port="${1:-4000}";
   local ip=$(ipconfig getifaddr en1);
   sleep 1 && open "http://${ip}:${port}/" &
   php -S "${ip}:${port}";
 }
 
-function reload { sudo systemctl reload $1 }
+reload () { sudo systemctl reload $1 }
 
-function restart { sudo systemctl restart $1 }
+restart () { sudo systemctl restart $1 }
 
 # Start an HTTP server from a directory, optionally specifying the port
-function server {
+server () {
   local port="${1:-8000}";
 
   # Set the default Content-Type to `text/plain` instead of `application/octet-stream`
@@ -186,14 +228,14 @@ function server {
   python3 -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
-function start { sudo systemctl start $1 }
+start () { sudo systemctl start $1 }
 
-function status { sudo systemctl status $1 }
+status () { sudo systemctl status $1 }
 
-function stop { sudo systemctl stop $1 }
+stop () { sudo systemctl stop $1 }
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
-function targz() {
+targz () {
   local tmpFile="${@%/}.tar";
   tar -cvf "${tmpFile}" --exclude=".DS_Store" "${@}" || return 1;
 
@@ -219,7 +261,7 @@ function targz() {
 }
 
 # Create a .tar.br archive, using `brotli` for compression
-function tarbr {
+tarbr () {
   if [ $# -eq 0 ];then
     printf "No arguments specified.\nUsage:\n tarbr <directory> <COMPRESSION: 1..11>">&2
 
@@ -252,7 +294,7 @@ function tarbr {
 }
 
 # Create a .tar.zst archive, using `zstd` for compression
-function tarzst {
+tarzst () {
   if [ $# -eq 0 ];then
     printf "No arguments specified.\nUsage:\n tarzst <directory> <CORES: 1..N> <COMPRESSION: 1..19>">&2
 
@@ -284,12 +326,12 @@ function tarzst {
 # the `.git` directory, listing directories first. The output gets piped into
 # `less` with options to preserve color and line numbers, unless the output is
 # small enough for one screen.
-function tre() {
+tre () {
   tree -aC -I '.git|bower_components|node_modules|vendor' --dirsfirst "$@" | less -FRNX;
 }
 
 # Decode \x{ABCD}-style Unicode escape sequences
-function unidecode() {
+unidecode () {
   perl -e "binmode(STDOUT, ':utf8'); print \"$@\"";
   # print a newline unless we’re piping the output to another program
   if [ -t 1 ]; then
@@ -297,8 +339,21 @@ function unidecode() {
   fi;
 }
 
-function unmark {
+unmark () {
   rm -i "$MARKPATH/$1"
+}
+
+ports () { sudo lsof -iTCP -sTCP:LISTEN -P }
+
+pwdx () { sudo lsof -a -d cwd -p $1 -n -Fn | awk '/^n/ {print substr($0,2)}' }
+
+lsofpi () { sudo lsof -P -i ":${1}" }
+
+notify_discord () {
+	HEADER="Machine: $(hostname), time: $(date +'%Y-%m-%d %H:%M:%S %z')\nMessage:"
+	curl -X POST \
+  -H "Content-Type: application/json" \
+  -d "{\"user\":\"pilus@pilus-mbp\",\"content\": \"$HEADER\n$1\"}" $DISCORD_WEBHOOK
 }
 
 compctl -K _completemarks jump
