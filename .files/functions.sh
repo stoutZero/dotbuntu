@@ -5,7 +5,7 @@ _completemarks () { reply=($(ls $MARKPATH)) }
 ee () {
   if [ "x" = "x${1}" ]; then
     echo "No file supplied, exiting."
-  	exit 1
+    exit 1
   fi
 
   truncate -s0 "${1}"
@@ -88,6 +88,7 @@ digga () {
 ducks () { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
 
 # Use Git’s colored diff when available
+unalias diff
 diff () {
   git diff --no-index --color-words "$@";
 }
@@ -350,10 +351,12 @@ pwdx () { sudo lsof -a -d cwd -p $1 -n -Fn | awk '/^n/ {print substr($0,2)}' }
 lsofpi () { sudo lsof -P -i ":${1}" }
 
 notify_discord () {
-	HEADER="Machine: $(hostname), time: $(date +'%Y-%m-%d %H:%M:%S %z')\nMessage:"
-	curl -X POST \
+  machine=$(hostname)
+  user=$(whoami)
+  HEADER="Machine: $(hostname), time: $(date +'%Y-%m-%d %H:%M:%S %z')\nMessage:"
+  curl -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"user\":\"pilus@pilus-mbp\",\"content\": \"$HEADER\n$1\"}" $DISCORD_WEBHOOK
+  -d "{\"user\":\"${user}@${machine}\",\"content\": \"$HEADER\n$1\"}" $DISCORD_WEBHOOK
 }
 
 compctl -K _completemarks jump
