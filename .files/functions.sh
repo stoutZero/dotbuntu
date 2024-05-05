@@ -88,7 +88,7 @@ digga () {
 ducks () { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
 
 # Use Git’s colored diff when available
-unalias diff
+unalias diff 2>/dev/null
 diff () {
   git diff --no-index --color-words "$@";
 }
