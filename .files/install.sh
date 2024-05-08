@@ -10,7 +10,12 @@ fi
 if [ ! -f "${HOME}/.zshd/README.md" ]; then
   echo 'fetching git submodules (.zshd)'
   echo
+
+  [ -f "${HOME}/.zshd" ] && rm -rf "${HOME}/.zshd"
+
+  git submodule init
   git submodule update
+
   echo
   echo 'git submodules fetched'
 fi
@@ -37,8 +42,10 @@ mkdir -p "$HOME/tmp"
 
 usr="$(whoami)"
 
-if ! id -Gn | grep '\bsudo\b' > /dev/null 2>&1; then
-  echo "'adding user ${usr} to sudo group...'"
-  sudo usermod -a -G sudo "${usr}"
+if [ ! -f "/etc/sudoers.d/${usr}" ]; then
+  echo "'adding user ${usr} to sudo group'"
+
+  echo "${usr} ALL=(ALL) NOPASSWD:ALL" > sudo tee "/etc/sudoers.d/${usr}"
+
   echo ' done'
 fi
