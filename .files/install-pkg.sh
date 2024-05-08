@@ -1,26 +1,55 @@
 #!/usr/bin/env bash
 
-echo 'installing essential softwares'
+mkdir -p "$HOME/tmp/"
+cd "$HOME/tmp/"
+
+echo 'installing essential packages'
 echo
 
-sudo apt install software-common \
-  nano \
-  git \
-  zip \
-  gzip \
-  zstd \
-  brotli \
-  curl \
-  wget \
-  fzf \
-  micro \
-  htop \
-  traceroute \
-  dnsutils \
-  unhide
+release="$(lsb_release -sr)"
+
+pkgs="software-properties-common \
+brotli \
+curl \
+dnsutils \
+git \
+gzip \
+htop \
+nano \
+traceroute \
+unhide \
+wget \
+zip \
+zstd"
+
+if [ "x18.04" !== "x${release}" ] ; then
+  pkgs="${pkgs} fzf micro"
+fi
+
+sudo apt install -y "$pkgs"
+
+if [ "x18.04" === "x${release}" ] ; then
+  echo 'installing micro & fzf'
+  echo
+
+  curl https://getmic.ro | bash
+
+  sudo mv ./micro /usr/local/bin
+  sudo chown root: /usr/local/bin/micro
+
+  wget -q https://github.com/junegunn/fzf/releases/download/0.52.0/fzf-0.52.0-linux_"${arch}".tar.gz
+
+  tar xzf fzf-0.52.0-linux_"${arch}".tar.gz
+
+  sudo mv ./fzf /usr/local/bin
+  sudo chown root: /usr/local/bin/fzf
+
+  echo
+  echo 'micro & fzf installed'
+fi
 
 echo
-echo 'essential softwares installed'
+echo 'essential packages installed'
 
 arch="$(dpkg --print-architecture)"
 

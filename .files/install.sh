@@ -43,9 +43,9 @@ mkdir -p "$HOME/tmp"
 usr="$(whoami)"
 
 if [ ! -f "/etc/sudoers.d/${usr}" ]; then
-  echo "'adding user ${usr} to sudo group'"
+  echo "adding user ${usr} to sudo"
 
-  echo "${usr} ALL=(ALL) NOPASSWD:ALL" > sudo tee "/etc/sudoers.d/${usr}"
+  echo "${usr} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${usr}"
 
-  echo ' done'
+  echo "user ${usr} added to sudo"
 fi
