@@ -27,7 +27,6 @@ fi
 mkdir -p "$HOME/tmp"
 
 usr="$(whoami)"
-sudo_file="/etc/sudoers.d/${usr}"
 
 if ! id -Gn | grep '\bsudo\b' > /dev/null 2>&1; then
   echo -n "'adding user ${usr} to sudo group...'"
