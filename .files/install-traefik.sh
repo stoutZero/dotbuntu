@@ -154,9 +154,9 @@ sudo tee /etc/traefik/traefik.toml > /dev/null <<EOT
   # Default host rule.
   #
   # Optional
-  # Default: "Host(`{{ normalize .Name }}`)"
+  # Default: "Host(\`{{ normalize .Name }}\`)"
   #
-  # defaultRule = "Host(`{{ normalize .Name }}.docker.localhost`)"
+  # defaultRule = "Host(\`{{ normalize .Name }}.docker.localhost\`)"
 
   # Expose containers by default in traefik
   #
