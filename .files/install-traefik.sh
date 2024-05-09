@@ -2,6 +2,8 @@
 
 
 if [ ! -f /usr/local/bin/traefik ]; then
+  cd /tmp/
+
   v=v3.0.0
 
   arch="$(dpkg --print-architecture)"
@@ -35,7 +37,7 @@ sudo chown -R root:root /etc/traefik
 sudo chown -R traefik:traefik /etc/traefik/acme
 
 
-sudo tee /etc/traefik/traefik.toml <<EOT
+sudo tee /etc/traefik/traefik.toml > /dev/null <<EOT
 # Configuration sample for Traefik v2.
 # From: https://github.com/traefik/traefik/blob/master/traefik.sample.toml
 
@@ -167,7 +169,7 @@ EOT
 sudo chown root:root /etc/traefik/traefik.toml
 sudo chmod 644 /etc/traefik/traefik.toml
 
-sudo tee /etc/systemd/system/traefik.service <<EOT
+sudo tee /etc/systemd/system/traefik.service > /dev/null <<EOT
 [Unit]
 Description=traefik proxy
 After=network-online.target
