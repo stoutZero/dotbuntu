@@ -11,7 +11,7 @@ export HISTCONTROL=ignoredups;
 # Make some commands not show up in history
 export HISTIGNORE="exit:date:clear:history";
 
-export HOMEBREW_GITHUB_API_TOKEN=$(\
+export GITHUB_TOKEN=$(\
   [ -f $HOME/.github-token ] && (\
     cat $HOME/.github-token  | tr -d '\r' | tr -d '\n'\
   ) || echo ''\
