@@ -3,7 +3,7 @@
 echo 'installing essential packages'
 echo
 
-source "${HOME}/.files/_install_funcs.sh"
+source ~/.files/_install_funcs.sh
 
 release=get_release
 

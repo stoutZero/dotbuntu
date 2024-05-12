@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "${HOME}/.files/_install_funcs.sh"
+source ~/.files/_install_funcs.sh
 
 os=get_platform
 arch=get_arch
