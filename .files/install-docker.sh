@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 arch=get_arch

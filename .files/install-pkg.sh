@@ -3,6 +3,7 @@
 echo 'installing essential packages'
 echo
 
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 release=get_release
@@ -25,12 +26,12 @@ wget \
 zip \
 zstd"
 
-cd /tmp
+cd /tmp || exit
 
 sudo add-apt-repository ppa:git-core/ppa
 sudo apt update
 
-if [ "x18.04" !== "x${release}" ] ; then
+if [ "18.04" != "${release}" ] ; then
   pkgs="${pkgs} fzf micro"
 fi
 
@@ -54,7 +55,7 @@ if ! command -v gh > /dev/null 2>&1 ; then
   sudo apt install gh -y
 fi
 
-if [ "x18.04" == "x${release}" ] ; then
+if [ "18.04" == "${release}" ] ; then
   echo 'installing micro & fzf'
   echo
 
@@ -87,15 +88,15 @@ if ! command -v bat > /dev/null 2>&1 ; then
 
   if ! command -v gh > /dev/null 2>&1 ; then
     ver=$(gh_download_latest $repo "*_${arch}.deb")
-  elif
-    wget -q "${repo}/releases/download/v${ver}/bat_${$ver}_${arch}.deb"
+  else
+    wget -q "${repo}/releases/download/v${ver}/${patt}"
   fi
 
   patt="bat_${ver}_${arch}.deb"
 
-  sudo dpkg -i $patt
+  sudo dpkg -i "$patt"
 
-  rm -f $patt
+  rm -f "$patt"
 
   echo
   echo 'bat installed'

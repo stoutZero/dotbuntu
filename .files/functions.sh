@@ -1,9 +1,14 @@
-# .functions
+# shellcheck disable=SC2148
+# SC2148: Tips
 
-_completemarks () { reply=($(ls $MARKPATH)) }
+_completemarks () { reply=($(ls $MARKPATH)) ; }
+
+psg () {
+  ps aux | grep $(echo $1 | sed "s/^\(.\)/[\1]/g")
+}
 
 ee () {
-  if [ "x" = "x${1}" ]; then
+  if [ "" = "${1}" ]; then
     echo "No file supplied, exiting."
     exit 1
   fi
@@ -82,15 +87,15 @@ _domainname () {
 
 # Run `dig` and display the most useful info
 digga () {
-  dig +nocmd "$1" any +multiline +noall +answer;
+  dig +nocmd "$1" any +multiline +noall +answer
 }
 
-ducks () { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} }
+ducks () { du -cksh "${1:-.}"/* | sort -rn | head -n ${2:-5} ; }
 
 # Use Git’s colored diff when available
 unalias diff 2>/dev/null
 diff () {
-  git diff --no-index --color-words "$@";
+  git diff --no-index --color-words "$@"
 }
 
 # UTF-8-encode a string of Unicode symbols
@@ -99,7 +104,7 @@ escape () {
   # print a newline unless we’re piping the output to another program
   if [ -t 1 ]; then
     echo ""; # newline
-  fi;
+  fi
 }
 
 # Determine size of a file or total size of a directory
@@ -113,7 +118,7 @@ fs () {
     du $arg -- "$@";
   else
     du $arg .[^.]* *;
-  fi;
+  fi
 }
 
 # Show all the names (CNs and SANs) listed in the SSL certificate
@@ -147,7 +152,7 @@ getcertnames () {
   else
     echo "ERROR: Certificate not found.";
     return 1;
-  fi;
+  fi
 }
 
 # Compare original and gzipped file size
@@ -184,7 +189,8 @@ jump () {
 }
 
 mark () {
-  mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+  mkdir -p "$MARKPATH"
+  ln -s "$(pwd)" "$MARKPATH/$1"
 }
 
 marks () {
@@ -192,13 +198,11 @@ marks () {
 }
 
 # Create a new directory and enter it
-mkd () {
-  mkdir -p "$@" && cd "$@";
-}
+mkd () { mkdir -p "$@" && cd "$@"; }
 
 netsize () {
-  local _size=$(curl -sIL $1 | grep -i '^Content-Length: ' | cut -d' ' -f2 | tr -d '\r')
-  local human=$(hrb $_size | tr -d '[:space:]')
+  local _size="$(curl -sIL $1 | grep -i '^Content-Length: ' | cut -d' ' -f2 | tr -d '\r')"
+  local human="$(hrb $_size | tr -d '[:space:]')"
 
   printf "%d bytes • ${human}\n" "${_size}"
 }
@@ -216,9 +220,9 @@ phpserver () {
   php -S "${ip}:${port}";
 }
 
-reload () { sudo systemctl reload $1 }
+reload () { sudo systemctl reload "$1" ; }
 
-restart () { sudo systemctl restart $1 }
+restart () { sudo systemctl restart "$1" ; }
 
 # Start an HTTP server from a directory, optionally specifying the port
 server () {
@@ -229,11 +233,11 @@ server () {
   python3 -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n  map[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port";
 }
 
-start () { sudo systemctl start $1 }
+start () { sudo systemctl start "$1" ; }
 
-status () { sudo systemctl status $1 }
+status () { sudo systemctl status "$1" ; }
 
-stop () { sudo systemctl stop $1 }
+stop () { sudo systemctl stop "$1" ; }
 
 # Create a .tar.gz archive, using `zopfli`, `pigz` or `gzip` for compression
 targz () {
@@ -281,7 +285,7 @@ tarbr () {
 
   _cmd="tar cf - ${1} | brotli";
 
-  if [ "x11" != "x${_z}" ]; then
+  if [ "11" != "${_z}" ]; then
     _cmd="${_cmd} -${_z}"
   fi
 
@@ -289,7 +293,7 @@ tarbr () {
 
   echo -n "Compressing '${1}' into '${outFile}' with brotli, compression level: ${_z}... ";
 
-  eval $_cmd
+  eval "$_cmd"
 
   echo "DONE";
 }
@@ -318,7 +322,7 @@ tarzst () {
 
   echo -n "Compressing '${1}' into '${outFile}' with zstd (cores: ${_c}, comp: ${_z})... ";
 
-  eval $_cmd
+  eval "$_cmd"
 
   echo "DONE";
 }
@@ -340,15 +344,16 @@ unidecode () {
   fi;
 }
 
-unmark () {
-  rm -i "$MARKPATH/$1"
+unmark () { rm -i "$MARKPATH/$1" ; }
+
+ports () { sudo lsof -iTCP -sTCP:LISTEN -P ; }
+
+pwdx () {
+  sudo lsof -a -d cwd -p "$1" -n -Fn \
+  | awk '/^n/ {print substr($0,2)}'
 }
 
-ports () { sudo lsof -iTCP -sTCP:LISTEN -P }
-
-pwdx () { sudo lsof -a -d cwd -p $1 -n -Fn | awk '/^n/ {print substr($0,2)}' }
-
-lsofpi () { sudo lsof -P -i ":${1}" }
+lsofpi () { sudo lsof -P -i ":${1}" ; }
 
 notify_discord () {
   machine=$(hostname)
@@ -356,15 +361,16 @@ notify_discord () {
   HEADER="Machine: $(hostname), time: $(date +'%Y-%m-%d %H:%M:%S %z')\nMessage:"
   curl -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"user\":\"${user}@${machine}\",\"content\": \"$HEADER\n$1\"}" $DISCORD_WEBHOOK
+  -d "{\"user\":\"${user}@${machine}\",\"content\": \"$HEADER\n$1\"}" \
+  "$DISCORD_WEBHOOK"
 }
 
 gh_latest () {
-  echo $(gh release list -R "${1}" --exclude-pre-releases -L 1 --json 'tagName' | jq '.[0].tagName' | sed 's/"//g')
+  "$(gh release list -R "${1}" --exclude-pre-releases -L 1 --json 'tagName' | jq '.[0].tagName' | sed 's/\"//g')"
 }
 
 gh_download_latest () {
-  if [ "x" == "x${1}" ] || [ "x" == "x${2}" ]; then
+  if [ "" == "${1}" ] || [ "" == "${2}" ]; then
     cat << EOF
 Usage: gh_download_latest <REPO> <PATTERN>
 
@@ -377,7 +383,7 @@ EOF
   repo="${1}"
   pattern="${2}"
 
-  latest=gh_latest $repo
+  latest="$(gh_latest "$repo")"
 
   gh release download \
     -R "${repo}" \

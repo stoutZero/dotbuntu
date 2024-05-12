@@ -1,4 +1,5 @@
-# .exports
+# shellcheck disable=SC2148
+# SC2148: Tips
 
 # Make nano the default editor
 export EDITOR="nano";
@@ -11,17 +12,20 @@ export HISTCONTROL=ignoredups;
 # Make some commands not show up in history
 export HISTIGNORE="exit:date:clear:history";
 
-export GITHUB_TOKEN=$(\
-  [ -f $HOME/.github-token ] && (\
-    cat $HOME/.github-token  | tr -d '\r' | tr -d '\n'\
-  ) || echo ''\
-)
+ghToken=''
+
+if [ -f ~/.github-token ]; then
+  ghToken=$(< ~/.github-token tr -d '\r' | tr -d '\n')
+fi
+
+export GITHUB_TOKEN=$ghToken
 
 # Prefer US English and use UTF-8
 export LANG="en_US.UTF-8";
 export LC_ALL="en_US.UTF-8";
 
 # Highlight section titles in manual pages
+# shellcheck disable=SC2154
 export LESS_TERMCAP_md="${yellow}";
 
 # Always use color output for `ls`
@@ -33,8 +37,10 @@ export MANPAGER="less -X";
 
 export PROMPT_COMMAND='echo -ne "$(nice_exit_code) \033]0;$PWD\007"'
 
-export DISCORD_WEBHOOK=$(\
-  [ -f $HOME/.discord.url ] && (\
-    cat $HOME/.discord.url  | tr -d '\r' | tr -d '\n'\
-  ) || echo ''\
-)
+url=''
+
+if [ -f ~/.discord.url ]; then
+  url=$(< ~/.discord.url tr -d '\r' | tr -d '\n')
+fi
+
+export DISCORD_WEBHOOK=$url

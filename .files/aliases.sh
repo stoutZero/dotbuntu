@@ -1,4 +1,6 @@
-# PILUS Aliases
+# shellcheck disable=SC2148
+# SC2148: Tips
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -18,7 +20,7 @@ alias clone='git clone '
 alias dfh='df -h '
 alias duh='du -h '
 
-alias edit=$EDITOR' '
+alias edit='$EDITOR'
 
 alias ela='els -l -a -h '
 alias empty='truncate -s0 '
@@ -48,11 +50,12 @@ alias k9='kill -9 '
 
 alias lla='ls -lash '
 alias lns='ln -s'
-alias localip="ipconfig getifaddr en0"
 
 alias mkdir='mkdir -p '
 alias mv='mv '
-alias myip='dig +short myip.opendns.com @resolver1.opendns.com'
+
+alias myip='wget -O - -q ipv4.icanhazip.com'
+alias myip6='wget -O - -q ipv6.icanhazip.com'
 
 alias ngd='sudo nginx -s stop'
 alias ngr='sudo nginx -s reload'
@@ -64,11 +67,10 @@ alias nn='nano '
 
 alias pgf='pgrep -f '
 alias po='popd '
-alias psg='ps aux | grep $(echo $1 | sed "s/^\(.\)/[\1]/g")'
 alias psx='ps aux '
 
 # Reload the shell (i.e. invoke as a login shell)
-alias relogin="exec $SHELL -l"
+alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
 
@@ -100,5 +102,6 @@ alias map="xargs -n1"
 
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+	# shellcheck disable=SC2139,SC2140
 	alias "$method"="lwp-request -m '$method'"
 done

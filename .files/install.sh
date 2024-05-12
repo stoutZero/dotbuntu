@@ -7,11 +7,11 @@ if ! command -v zsh > /dev/null 2>&1 ; then
   echo 'zsh installed'
 fi
 
-if [ ! -f "${HOME}/.zshd/README.md" ]; then
+if [ ! -f ~/.zshd/README.md ]; then
   echo 'fetching git submodules (.zshd)'
   echo
 
-  [ -f "${HOME}/.zshd" ] && rm -rf "${HOME}/.zshd"
+  [ -f ~/.zshd ] && rm -rf ~/.zshd
 
   git submodule init
   git submodule update
@@ -20,11 +20,11 @@ if [ ! -f "${HOME}/.zshd/README.md" ]; then
   echo 'git submodules fetched'
 fi
 
-if [ ! -d "${HOME}/.zshd/custom/plugins/nice-exit-code" ]; then
+if [ ! -d ~/.zshd/custom/plugins/nice-exit-code ]; then
   echo 'cloning nice-exit-code'
   echo
   git clone https://github.com/bric3/nice-exit-code \
-    "${HOME}/.zshd/custom/plugins/nice-exit-code"
+    ~/.zshd/custom/plugins/nice-exit-code
   echo
   echo 'nice-exit-code cloned'
 fi
@@ -38,7 +38,7 @@ if [ "$(basename "$SHELL")" != "zsh" ]; then
   echo 'default shell changed'
 fi
 
-mkdir -p "$HOME/tmp"
+mkdir -p ~/tmp
 
 usr="$(whoami)"
 
@@ -50,6 +50,6 @@ if [ ! -f "/etc/sudoers.d/${usr}" ]; then
   echo "user ${usr} added to sudo"
 fi
 
-if [ ! -f "${HOME}/.github-token" ]; then
-  touch "${HOME}/.github-token"
+if [ ! -f ~/.github-token ]; then
+  touch ~/.github-token
 fi
