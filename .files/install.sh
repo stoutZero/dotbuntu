@@ -50,6 +50,6 @@ if [ ! -f "/etc/sudoers.d/${usr}" ]; then
   echo "user ${usr} added to sudo"
 fi
 
-if [ !-f "${HOME}/.github-token" ]; then
+if [ ! -f "${HOME}/.github-token" ]; then
   touch "${HOME}/.github-token"
 fi
