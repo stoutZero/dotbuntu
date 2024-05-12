@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 
-mkdir -p "$HOME/tmp/"
-cd "$HOME/tmp/"
-
 echo 'installing essential packages'
 echo
 
-source ./_install_funcs.sh
+source "${HOME}/.files/_install_funcs.sh"
 
 release=get_release
 
@@ -29,6 +26,9 @@ zip \
 zstd"
 
 cd /tmp
+
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt update
 
 if [ "x18.04" !== "x${release}" ] ; then
   pkgs="${pkgs} fzf micro"
