@@ -359,5 +359,33 @@ notify_discord () {
   -d "{\"user\":\"${user}@${machine}\",\"content\": \"$HEADER\n$1\"}" $DISCORD_WEBHOOK
 }
 
+gh_latest () {
+  echo $(gh release list -R "${1}" --exclude-pre-releases -L 1 --json 'tagName' | jq '.[0].tagName' | sed 's/"//g')
+}
+
+gh_download_latest () {
+  if [ "x" == "x${1}" ] || [ "x" == "x${2}" ]; then
+    cat << EOF
+Usage: gh_download_latest <REPO> <PATTERN>
+
+e.g.: gh_download_latest https://github.com/sharkdp/bat "bat-musl_*_amd64.deb"
+
+EOF
+    exit 1
+  fi
+
+  repo="${1}"
+  pattern="${2}"
+
+  latest=gh_latest $repo
+
+  gh release download \
+    -R "${repo}" \
+    -p "${pattern}" \
+    "${latest}"
+
+  echo "${latest}"
+}
+
 compctl -K _completemarks jump
 compctl -K _completemarks unmark

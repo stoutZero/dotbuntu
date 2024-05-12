@@ -6,14 +6,20 @@ cd "$HOME/tmp/"
 echo 'installing essential packages'
 echo
 
-release="$(lsb_release -sr)"
+source ./_install_funcs.sh
+
+release=get_release
+
+arch=get_arch
 
 pkgs="software-properties-common \
 brotli \
+bzip2
 curl \
 dnsutils \
 git \
 gzip \
+jq \
 htop \
 nano \
 traceroute \
@@ -22,11 +28,31 @@ wget \
 zip \
 zstd"
 
+cd /tmp
+
 if [ "x18.04" !== "x${release}" ] ; then
   pkgs="${pkgs} fzf micro"
 fi
 
 sudo apt install -y "$pkgs"
+
+if ! command -v gh > /dev/null 2>&1 ; then
+  sudo mkdir -p -m 755 /etc/apt/keyrings 
+  wget -qO- \
+    https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    > /dev/null 
+
+  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg 
+
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list \
+    > /dev/null 
+
+  sudo apt update 
+
+  sudo apt install gh -y
+fi
 
 if [ "x18.04" === "x${release}" ] ; then
   echo 'installing micro & fzf'
@@ -51,17 +77,25 @@ fi
 echo
 echo 'essential packages installed'
 
-arch="$(dpkg --print-architecture)"
-
 if ! command -v bat > /dev/null 2>&1 ; then
   echo 'installing bat'
   echo
 
-  wget -q https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_"${arch}".deb
+  ver="0.24.0"
+  repo=https://github.com/sharkdp/bat
+  patt="bat_${ver}_${arch}.deb"
 
-  sudo dpkg -i bat_0.24.0_"${arch}".deb
+  if ! command -v gh > /dev/null 2>&1 ; then
+    ver=$(gh_download_latest $repo "*_${arch}.deb")
+  elif
+    wget -q "${repo}/releases/download/v${ver}/bat_${$ver}_${arch}.deb"
+  fi
 
-  rm -f bat_0.24.0_"${arch}".deb
+  patt="bat_${ver}_${arch}.deb"
+
+  sudo dpkg -i $patt
+
+  rm -f $patt
 
   echo
   echo 'bat installed'
