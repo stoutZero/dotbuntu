@@ -41,8 +41,11 @@ fi
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
 
-echo "installing:  ${pkgs}"
-sudo apt install -y "$pkgs"
+_apt="sudo apt install -y ${pkgs}"
+
+echo "$_apt"
+eval "$_apt"
+
 
 if ! command -v gh > /dev/null 2>&1 ; then
   install_keyring
