@@ -8,21 +8,12 @@ sudo add-apt-repository ppa:ondrej/php
 echo
 echo "ondrej's ppa added"
 
-echo 'apt update'
-echo
-
-sudo apt update
-
-echo
-echo "apt updated"
-
 echo 'installing php & redis via apt'
 echo
 
-sudo apt install -y php7.4 \
-  php7.4-fpm \
-  php7.4-bcmath \
+sudo apt install -y php7.4-fpm \
   php7.4-cli \
+  php7.4-bcmath \
   php7.4-common \
   php7.4-curl \
   php7.4-gd \

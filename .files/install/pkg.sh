@@ -37,7 +37,6 @@ cd /tmp || exit
 if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]
 then
   sudo add-apt-repository ppa:git-core/ppa
-  sudo apt update
 fi
 
 if [ "18.04" != "${release}" ] ; then

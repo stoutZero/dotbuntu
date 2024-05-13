@@ -11,34 +11,25 @@ sudo add-apt-repository ppa:ondrej/php
 echo
 echo "ondrej's ppa added"
 
-echo 'apt update'
-echo
-
-sudo apt update
-
-echo
-echo "apt updated"
-
 echo 'installing php & redis via apt'
 echo
 
-sudo apt install -y php \
-  php-fpm \
-  php-bcmath \
-  php-cli \
-  php-common \
-  php-curl \
-  php-gd \
-  php-igbinary \
-  php-imagick \
+sudo apt install -y php8.3-fpm \
+  php8.3-cli \
+  php8.3-bcmath \
+  php8.3-common \
+  php8.3-curl \
+  php8.3-gd \
+  php8.3-igbinary \
+  php8.3-imagick \
   php-json \
-  php-mbstring \
-  php-opcache \
-  php-pgsql \
-  php-readline \
-  php-redis \
-  php-xml \
-  php-zip \
+  php8.3-mbstring \
+  php8.3-opcache \
+  php8.3-pgsql \
+  php8.3-readline \
+  php8.3-redis \
+  php8.3-xml \
+  php8.3-zip \
   redis-server
 
 echo

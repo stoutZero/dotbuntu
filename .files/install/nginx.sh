@@ -8,14 +8,6 @@ sudo add-apt-repository ppa:ondrej/nginx-mainline
 echo
 echo "ondrej's ppa added"
 
-echo 'apt update'
-echo
-
-sudo apt update
-
-echo
-echo "apt updated"
-
 echo 'installing nginx via apt'
 echo
 
