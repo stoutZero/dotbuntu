@@ -98,7 +98,7 @@ if ! command -v bat > /dev/null 2>&1 ; then
   patt="bat_${ver}_${arch}.deb"
 
   if ! command -v gh > /dev/null 2>&1 ; then
-    ver=$(gh_download_latest $repo "*_${arch}.deb")
+    ver=$(gh_dl $repo "*_${arch}.deb")
   else
     wget -q "${repo}/releases/download/v${ver}/${patt}"
   fi

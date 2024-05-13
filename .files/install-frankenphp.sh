@@ -9,7 +9,7 @@ hw="$(get_hw)"
 repo=https://github.com/dunglas/frankenphp
 filename="frankenphp-${os}-${hw}"
 
-gh_download_latest "$repo" "$filename"
+gh_dl "$repo" "$filename"
 
 if [ -f "$filename" ]; then
   sudo mv "$filename" /usr/local/bin/

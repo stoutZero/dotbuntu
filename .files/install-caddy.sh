@@ -12,7 +12,7 @@ repo=https://github.com/caddyserver/caddy
 echo 'downloading latest caddy release from github'
 echo
 
-version=$(gh_download_latest $repo "*_${os}_${arch}.deb")
+version=$(gh_dl $repo "*_${os}_${arch}.deb")
 version="${version//v/}"
 
 echo

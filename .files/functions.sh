@@ -366,15 +366,16 @@ notify_discord () {
 }
 
 gh_latest () {
-  "$(gh release list -R "${1}" --exclude-pre-releases -L 1 --json 'tagName' | jq '.[0].tagName' | sed 's/\"//g')"
+  # shellcheck disable=SC2005
+  echo "$(gh release list -R "${1}" --exclude-pre-releases -L 1 --json 'tagName' | jq '.[0].tagName' | sed 's/\"//g')"
 }
 
-gh_download_latest () {
-  if [ "" == "${1}" ] || [ "" == "${2}" ]; then
+gh_dl () {
+  if [[ "" == "${1}" ]] || [[ "" == "${2}" ]]; then
     cat << EOF
-Usage: gh_download_latest <REPO> <PATTERN>
+Usage: gh_dl <REPO> <PATTERN>
 
-e.g.: gh_download_latest https://github.com/sharkdp/bat "bat-musl_*_amd64.deb"
+e.g.: gh_dl https://github.com/sharkdp/bat "bat_*_amd64.deb"
 
 EOF
     exit 1
