@@ -35,12 +35,12 @@ if [ ! -d /home/deployer/.nvm/versions/node ]; then
   sudo su deployer -l -c 'source ~/.zshrc ; nvm install --lts'
 fi
 
-if ! ls -1 "/home/deployer/.nvm/versions/node/*/bin/ni" > /dev/null 2>&1; then
+if ! ls -1 /home/deployer/.nvm/versions/node/*/bin/ni > /dev/null 2>&1; then
   echo 'installing npm package: @antfu/ni as deployer'
-  sudo su deployer -l -c 'source ~/.zshrc ; npm install @antfu/ni'
+  sudo su deployer -l -c 'source ~/.zshrc ; npm install -g @antfu/ni'
 fi
 
-if ! command -v pnpm > /dev/null 2>&1; then
+if [ ! -f /home/deployer/.local/share/pnpm/pnpm ]; then
   echo 'installing pnpm as deployer'
   sudo su deployer -l -c 'curl -fsSL https://get.pnpm.io/install.sh | sh -'
 fi
