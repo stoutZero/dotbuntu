@@ -394,5 +394,7 @@ EOF
   echo "${latest}"
 }
 
+sshk () { ssh-keygen -t ed25519 -C "${1}" -f "${1}" ; }
+
 compctl -K _completemarks jump
 compctl -K _completemarks unmark

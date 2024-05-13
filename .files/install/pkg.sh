@@ -19,6 +19,7 @@ brotli \
 bzip2 \
 curl \
 dnsutils \
+fail2ban \
 git \
 gzip \
 jq \
@@ -27,6 +28,7 @@ nano \
 traceroute \
 unhide \
 wget \
+whois \
 zip \
 zstd"
 
