@@ -1,4 +1,6 @@
-# shellcheck disable=SC1090,SC2148
+#!/usr/bin/env zsh
+
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 os="$(get_platform)"
@@ -12,13 +14,6 @@ echo
 
 version=$(gh_dl $repo "*_${os}_${arch}.deb")
 version="${version//v/}"
-
-if [[ "" == "$version" ]]; then
-  echo
-  echo 'cannot download latest caddy release'
-
-  exit 1
-fi
 
 echo
 echo 'latest caddy release downloaded'

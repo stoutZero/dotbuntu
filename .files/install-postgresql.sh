@@ -1,4 +1,5 @@
-# shellcheck disable=SC1090,SC2148
+#!/usr/bin/env zsh
+
 sudo apt install curl ca-certificates
 
 if [ ! -d /usr/share/postgresql-common/pgdg ]; then

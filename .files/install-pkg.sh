@@ -1,4 +1,5 @@
-# shellcheck disable=SC1090,SC2148
+#!/usr/bin/env zsh
+
 echo 'installing essential packages'
 echo
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# shellcheck disable=SC2148
 
 get_arch () {
   # shellcheck disable=SC2005
