@@ -26,5 +26,10 @@ echo
 sudo dpkg -i "${filename}"
 rm -f "${filename}"
 
+if [ -f /usr/bin/caddy ]; then
+  echo 'setcap to /usr/bin/caddy'
+  sudo setcap 'cap_net_bind_service=+ep' /usr/bin/caddy
+fi
+
 echo
 echo 'caddy installed'
