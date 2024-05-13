@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
-get_platform () { "$(uname -s | tr '[:upper:]' '[:lower:]')" ; }
 
-get_hw () { uname -i ; }
+get_arch () {
+  # shellcheck disable=SC2005
+  echo "$(dpkg --print-architecture)"
+}
 
-get_arch () { "$(dpkg --print-architecture)" ;  }
+get_hw () {
+  # shellcheck disable=SC2005
+  echo "$(uname -i)"
+}
 
-get_release () { "$(lsb_release -sr)" ; }
+get_platform () {
+  # shellcheck disable=SC2005
+  echo "$(uname -s | tr '[:upper:]' '[:lower:]')"
+}
 
-get_release_name () { "$(lsb_release -sc)" ; }
+get_release () {
+  # shellcheck disable=SC2005
+  echo "$(lsb_release -sr)"
+}
+
+get_release_name () {
+  # shellcheck disable=SC2005
+  echo "$(lsb_release -sc)"
+}
 
 install_keyring () {
   if [ ! -d /etc/apt/keyrings ]; then
