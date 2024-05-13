@@ -30,7 +30,7 @@ if [ ! -d ~/.zshd/custom/plugins/nice-exit-code ]; then
 fi
 
 
-if [ "$(basename "$SHELL")" != "zsh" ]; then
+if [[ "$(basename "$SHELL")" != "zsh" ]]; then
   echo 'changing default shell to zshd'
   echo
   chsh -s "$(command -v zsh)"

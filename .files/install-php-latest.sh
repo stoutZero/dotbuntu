@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC2148
 source ~/.files/_install_funcs.sh
 
 echo "adding ondrej's ppa"

@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-
+# shellcheck disable=SC1090,SC2148
 echo "adding ondrej's ppa"
 echo
 
