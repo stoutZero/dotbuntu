@@ -39,7 +39,7 @@ if [ "18.04" != "${release}" ] ; then
   pkgs="${pkgs} fzf micro"
 fi
 
-pkg="$(< "$pkgs" tr -d '\n')"
+pkgs="$(echo "$pkgs" | tr -d '\n')"
 
 echo "installing:  ${pkgs}"
 sudo apt install -y "$pkgs"
