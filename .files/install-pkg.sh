@@ -1,10 +1,13 @@
 #!/usr/bin/env zsh
 
-echo 'installing essential packages'
-echo
+# shellcheck disable=SC1090
+source ~/.files/functions.sh
 
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
+
+echo 'installing essential packages'
+echo
 
 release="$(get_release)"
 release_name="$(get_release_name)"

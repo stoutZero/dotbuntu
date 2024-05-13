@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 
 # shellcheck disable=SC1090
+source ~/.files/functions.sh
+
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 os="$(get_platform)"
@@ -23,6 +26,7 @@ echo
 
 if [ -f "$filename" ]; then
   sudo mv "$filename" /usr/local/bin/frankenphp
+  sudo chmod a+x /usr/local/bin/frankenphp
 
   echo 'setcap to /usr/local/bin/frankenphp'
   sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/frankenphp

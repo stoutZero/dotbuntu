@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 
 # shellcheck disable=SC1090
+source ~/.files/functions.sh
+
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 os="$(get_platform)"
