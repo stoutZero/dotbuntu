@@ -25,6 +25,10 @@ alias edit='$EDITOR'
 alias ela='els -l -a -h '
 alias empty='truncate -s0 '
 
+if ! command -v frankenphp > /dev/null 2>&1 ; then
+	alias fart='frankenphp php-cli ./artisan'
+fi
+
 alias fire='dig +short -t txt istheinternetonfire.com'
 
 alias g='\git '

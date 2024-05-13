@@ -23,7 +23,6 @@ echo 'installing php & redis via apt'
 echo
 
 sudo apt install -y php \
-  php-fpm \
   php-bcmath \
   php-cli \
   php-common \

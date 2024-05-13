@@ -3,36 +3,33 @@
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-arch=get_arch
+arch="$(get_arch)"
 
-sudo apt install software-properties-common \
+sudo apt install -y software-properties-common \
   apt-transport-https \
   ca-certificates \
   curl \
   gnupg
 
-if [ ! -d /etc/apt/keyrings ]; then
-  echo 'ensuring keyrings dir exists'
-  echo
-
-  sudo install -m 0755 -d /etc/apt/keyrings
-
-  echo
-  echo 'keyrings dir exists'
-fi
+install_keyring
 
 echo 'installing docker apt key & source'
 echo
 
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+if [ ! -f /etc/apt/keyrings/docker.asc ]; then
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+fi
 
-# shellcheck disable=SC1091
-echo \
-  "deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+if [ ! -f /etc/apt/sources.list.d/docker.list ]; then
+  # shellcheck disable=SC1091
+  echo \
+    "deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  sudo apt update
+fi
 
 echo
 echo 'docker apt key & source installed'
@@ -52,11 +49,20 @@ echo 'docker-ce & others installed via apt'
 echo "installing google's gvisor"
 echo
 
-curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
+if [ ! -f /usr/share/keyrings/gvisor-archive-keyring.gpg ]; then
+  curl -fsSL https://gvisor.dev/archive.key \
+    | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
+fi
 
-echo "deb [arch=${arch} signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list > /dev/null
+if [ ! -f /etc/apt/sources.list.d/gvisor.list ]; then
+  echo "deb [arch=${arch} signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" \
+    | sudo tee /etc/apt/sources.list.d/gvisor.list \
+    > /dev/null
 
-sudo apt-get update && sudo apt-get install -y runsc
+  sudo apt update
+fi
+
+sudo apt-get install -y runsc
 
 echo
 echo "google's gvisor installed"

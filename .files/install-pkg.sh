@@ -6,9 +6,10 @@ echo
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-release=get_release
+release="$(get_release)"
+release_name="$(get_release_name)"
 
-arch=get_arch
+arch="$(get_arch)"
 
 pkgs="software-properties-common \
 brotli \
@@ -28,17 +29,22 @@ zstd"
 
 cd /tmp || exit
 
-sudo add-apt-repository ppa:git-core/ppa
-sudo apt update
+if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]
+then
+  sudo add-apt-repository ppa:git-core/ppa
+  sudo apt update
+fi
 
 if [ "18.04" != "${release}" ] ; then
   pkgs="${pkgs} fzf micro"
 fi
 
+echo 'installing: '"$(< "$pkgs" tr -d '\n')"
 sudo apt install -y "$pkgs"
 
 if ! command -v gh > /dev/null 2>&1 ; then
-  sudo mkdir -p -m 755 /etc/apt/keyrings 
+  install_keyring
+
   wget -qO- \
     https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg \
@@ -46,7 +52,7 @@ if ! command -v gh > /dev/null 2>&1 ; then
 
   sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
 
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+  echo "deb [arch=${arch} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
     | sudo tee /etc/apt/sources.list.d/github-cli.list \
     > /dev/null 
 
