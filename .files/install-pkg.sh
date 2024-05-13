@@ -13,7 +13,7 @@ arch="$(get_arch)"
 
 pkgs="software-properties-common \
 brotli \
-bzip2
+bzip2 \
 curl \
 dnsutils \
 git \
@@ -39,7 +39,9 @@ if [ "18.04" != "${release}" ] ; then
   pkgs="${pkgs} fzf micro"
 fi
 
-echo 'installing: '"$(< "$pkgs" tr -d '\n')"
+pkg="$(< "$pkgs" tr -d '\n')"
+
+echo "installing:  ${pkgs}"
 sudo apt install -y "$pkgs"
 
 if ! command -v gh > /dev/null 2>&1 ; then
