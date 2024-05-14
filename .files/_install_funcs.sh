@@ -36,3 +36,18 @@ install_keyring () {
     echo 'keyrings dir exists'
   fi
 }
+
+check_ppa () {
+  ppa="$1"
+
+  count="$(grep -ri "$ppa" /etc/apt/sources.list.d | wc -l 2>/dev/null)"
+  RETVAL=$?
+
+  if [[ RETVAL != 0 ]]
+  then
+    echo 0
+    exit -1
+  fi
+
+  echo count
+}

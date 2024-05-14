@@ -1,12 +1,21 @@
 #!/usr/bin/env zsh
 
-echo "adding ondrej's ppa"
-echo
+# shellcheck disable=SC1090
+source ~/.files/functions.sh
 
-sudo add-apt-repository ppa:ondrej/php
+# shellcheck disable=SC1090
+source ~/.files/_install_funcs.sh
 
-echo
-echo "ondrej's ppa added"
+if (( $(check_ppa 'ondrej/php') < 1))
+then
+  echo "adding ondrej's ppa"
+  echo
+
+  sudo add-apt-repository ppa:ondrej/php
+
+  echo
+  echo "ondrej's ppa added"
+fi
 
 echo 'installing php & redis via apt'
 echo

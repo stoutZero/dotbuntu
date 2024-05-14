@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 
 # shellcheck disable=SC1090
+source ~/.files/functions.sh
+
+# shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
 arch="$(get_arch)"
@@ -16,23 +19,27 @@ install_keyring
 echo 'installing docker apt key & source'
 echo
 
-if [ ! -f /etc/apt/keyrings/docker.asc ]; then
-  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-  sudo chmod a+r /etc/apt/keyrings/docker.asc
+if (( $(check_ppa 'download.docker.com') < 1))
+then
+  if [ ! -f /etc/apt/keyrings/docker.asc ]; then
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+      -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+  fi
+
+  if [ ! -f /etc/apt/sources.list.d/docker.list ]; then
+    # shellcheck disable=SC1091
+    echo \
+      "deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    sudo apt update
+  fi
+
+  echo
+  echo 'docker apt key & source installed'
 fi
-
-if [ ! -f /etc/apt/sources.list.d/docker.list ]; then
-  # shellcheck disable=SC1091
-  echo \
-    "deb [arch=${arch} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-  sudo apt update
-fi
-
-echo
-echo 'docker apt key & source installed'
 
 echo 'installing docker-ce & others...'
 echo

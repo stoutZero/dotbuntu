@@ -1,12 +1,21 @@
 #!/usr/bin/env zsh
 
-echo "adding ondrej's ppa"
-echo
+# shellcheck disable=SC1090
+source ~/.files/functions.sh
 
-sudo add-apt-repository ppa:ondrej/nginx-mainline
+# shellcheck disable=SC1090
+source ~/.files/_install_funcs.sh
 
-echo
-echo "ondrej's ppa added"
+if (( $(check_ppa 'ondrej/nginx-mainline') < 1))
+then
+  echo "adding ondrej's ppa"
+  echo
+
+  sudo add-apt-repository ppa:ondrej/nginx-mainline
+
+  echo
+  echo "ondrej's ppa added"
+fi
 
 echo 'installing nginx via apt'
 echo
