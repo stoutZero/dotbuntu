@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-sudo apt install curl ca-certificates
+sudo apt install -y curl ca-certificates
 
 if [ ! -d /usr/share/postgresql-common/pgdg ]; then
   sudo install -d /usr/share/postgresql-common/pgdg

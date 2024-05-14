@@ -2,6 +2,7 @@
 
 # Blacklist everything
 *
+/.files/extra.sh
 
 # Whitelist individual items
 !README
@@ -16,4 +17,3 @@
 !/.files/
 !/.files/*
 !/.files/install/*
-

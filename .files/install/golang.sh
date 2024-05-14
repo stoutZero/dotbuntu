@@ -11,16 +11,16 @@ then
   echo "adding ppa:longsleep/golang-backports"
   echo
 
-  sudo apt install curl ca-certificates
+  sudo apt install -y curl ca-certificates
 
-  sudo add-apt-repository ppa:longsleep/golang-backports
+  sudo add-apt-repository -y ppa:longsleep/golang-backports
 
   echo
   echo "added: ppa:longsleep/golang-backports"
 fi
 
 if ! command -v go > /dev/null 2>&1; then
-  sudo apt install golang-go
+  sudo apt install -y golang-go
 fi
 
 echo

@@ -30,6 +30,7 @@ if [ -f "$filename" ]; then
 
   echo 'setcap to /usr/local/bin/frankenphp'
   sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/frankenphp
+  sudo chown www-data: /usr/local/bin/frankenphp
 fi
 
 echo

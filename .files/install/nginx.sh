@@ -11,7 +11,7 @@ then
   echo "adding ondrej's ppa"
   echo
 
-  sudo add-apt-repository ppa:ondrej/nginx-mainline
+  sudo add-apt-repository -y ppa:ondrej/nginx-mainline
 
   echo
   echo "ondrej's ppa added"

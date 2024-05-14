@@ -26,6 +26,7 @@ jq \
 htop \
 nano \
 traceroute \
+tree \
 unhide \
 wget \
 whois \
@@ -36,7 +37,7 @@ cd /tmp || exit
 
 if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]
 then
-  sudo add-apt-repository ppa:git-core/ppa
+  sudo add-apt-repository -y ppa:git-core/ppa
 fi
 
 if [ "18.04" != "${release}" ] ; then
@@ -67,7 +68,7 @@ if ! command -v gh > /dev/null 2>&1 ; then
 
   sudo apt update 
 
-  sudo apt install gh -y
+  sudo apt install -y gh
 fi
 
 if [ "18.04" == "${release}" ] ; then

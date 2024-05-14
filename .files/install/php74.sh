@@ -11,7 +11,7 @@ then
   echo "adding ondrej's ppa"
   echo
 
-  sudo add-apt-repository ppa:ondrej/php
+  sudo add-apt-repository -y ppa:ondrej/php
 
   echo
   echo "ondrej's ppa added"
