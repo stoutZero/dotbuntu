@@ -12,17 +12,14 @@ hw="$(get_hw)"
 repo=https://github.com/dunglas/frankenphp
 filename="frankenphp-${os}-${hw}"
 
-echo 'downloading latest frankenphp release from github'
-echo
+__echo__ 'downloading latest frankenphp release from github'
 
 gh_dl "$repo" "$filename"
 version="${version//v/}"
 
-echo
-echo 'latest frankenphp release downloaded'
+__echo__ 'latest frankenphp release downloaded'
 
-echo 'installing frankenphp'
-echo
+__echo__ 'installing frankenphp'
 
 if [ -f "$filename" ]; then
   sudo mv "$filename" /usr/local/bin/frankenphp
@@ -33,13 +30,4 @@ if [ -f "$filename" ]; then
   sudo chown www-data: /usr/local/bin/frankenphp
 fi
 
-echo
-echo 'frankenphp installed'
-
-echo 'installing redis via apt'
-echo
-
-sudo apt install -y redis-server
-
-echo
-echo 'redis installed via apt'
+__echo__ 'frankenphp installed'

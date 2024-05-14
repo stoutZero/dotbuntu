@@ -8,6 +8,8 @@ source ~/.files/_install_funcs.sh
 
 arch="$(get_arch)"
 
+__echo__ 'installing required packages'
+
 sudo apt install -y software-properties-common \
   apt-transport-https \
   ca-certificates \
@@ -16,8 +18,11 @@ sudo apt install -y software-properties-common \
 
 install_keyring
 
-echo 'installing docker apt key & source'
-echo
+__echo__ 'installed: required packages'
+
+__echo__ 'installing docker apt key & source'
+
+pkgs=''
 
 if (( $(check_ppa 'download.docker.com') < 1))
 then
@@ -37,24 +42,18 @@ then
     sudo apt update
   fi
 
-  echo
-  echo 'docker apt key & source installed'
+  __echo__ 'installed: docker apt key & source'
 fi
 
-echo 'installing docker-ce & others...'
-echo
+if ! command -v docker > /dev/null 2>&1 ; then
+  pkgs="docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin"
+fi
 
-sudo apt install -y docker-ce \
-  docker-ce-cli \
-  containerd.io \
-  docker-buildx-plugin \
-  docker-compose-plugin
-
-echo
-echo 'docker-ce & others installed via apt'
-
-echo "installing google's gvisor"
-echo
+__echo__ "installing google gvisor apt source"
 
 if [ ! -f /usr/share/keyrings/gvisor-archive-keyring.gpg ]; then
   curl -fsSL https://gvisor.dev/archive.key \
@@ -69,7 +68,16 @@ if [ ! -f /etc/apt/sources.list.d/gvisor.list ]; then
   sudo apt update
 fi
 
-sudo apt-get install -y runsc
+__echo__ "installed: google gvisor apt source"
 
-echo
-echo "google's gvisor installed"
+__echo__ 'installing docker-ce & co, and gvisor'
+
+if ! command -v runsc > /dev/null 2>&1 ; then
+  pkgs="${pkgs} runsc"
+fi
+
+if [ "" != "$pkgs" ]; then
+  sudo apt install -y "$pkgs"
+fi
+
+__echo__ 'installed: docker-ce & co, and gvisor'

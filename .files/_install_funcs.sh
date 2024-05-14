@@ -1,4 +1,16 @@
+#!/usr/bin/env zsh
+
 # shellcheck disable=SC2148
+
+__echo__ () {
+  local lc=$'\e[' rc=m  # Standard ANSI terminal escape values
+  local blue='34'
+  local none='00'
+
+  echo ; echo
+  echo "$fg_bold[blue][INSTALLER] ${1}${reset_color}"
+  echo ; echo
+}
 
 get_arch () {
   # shellcheck disable=SC2005

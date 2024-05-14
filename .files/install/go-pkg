@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+
+# shellcheck disable=SC1090
+source ~/.files/functions.sh
+
+# shellcheck disable=SC1090
+source ~/.files/_install_funcs.sh
+
+__echo__ 'installing go packages as root'
+
+release="$(get_release)"
+release_name="$(get_release_name)"
+
+arch="$(get_arch)"
+
+names="fx xcaddy"
+
+pkgs='github.com/antonmedv/fx'
+pkgs="$pkgs github.com/caddyserver/xcaddy"
+
+if ! command -v go; then
+  zsh ~/.files/install/golang.sh
+fi
+
+__echo__ "installing: $pkgs"
+
+for pkg in $pkgs; do
+  sudo go install "${pkg}"
+done
+
+for name in $names; do
+  sudo ln -s /root/go/bin/"${name}" /usr/local/bin/
+done
+
+__echo__ "installed to /usr/local/bin/ => $pkgs"

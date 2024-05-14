@@ -6,8 +6,7 @@ source ~/.files/functions.sh
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-echo 'installing essential packages'
-echo
+__echo__ 'installing essential packages'
 
 release="$(get_release)"
 release_name="$(get_release_name)"
@@ -25,6 +24,7 @@ gzip \
 jq \
 htop \
 nano \
+redis-server \
 traceroute \
 tree \
 unhide \
@@ -72,8 +72,7 @@ if ! command -v gh > /dev/null 2>&1 ; then
 fi
 
 if [ "18.04" == "${release}" ] ; then
-  echo 'installing micro & fzf'
-  echo
+  __echo__ 'installing micro & fzf'
 
   curl https://getmic.ro | bash
 
@@ -87,16 +86,11 @@ if [ "18.04" == "${release}" ] ; then
   sudo mv ./fzf /usr/local/bin
   sudo chown root: /usr/local/bin/fzf
 
-  echo
-  echo 'micro & fzf installed'
+  __echo__ 'installed: micro & fzf'
 fi
 
-echo
-echo 'essential packages installed'
-
 if ! command -v bat > /dev/null 2>&1 ; then
-  echo 'installing bat'
-  echo
+  __echo__ 'installing bat'
 
   ver="0.24.0"
   repo=https://github.com/sharkdp/bat
@@ -114,6 +108,7 @@ if ! command -v bat > /dev/null 2>&1 ; then
 
   rm -f "$patt"
 
-  echo
-  echo 'bat installed'
+  __echo__ 'installed: bat'
 fi
+
+__echo__ 'essential packages installed'
