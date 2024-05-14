@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+sudo echo "starting sudo" > /dev/null 2>&1
+
 # shellcheck disable=SC1090
 source ~/.files/functions.sh
 
@@ -13,10 +15,29 @@ release_name="$(get_release_name)"
 
 arch="$(get_arch)"
 
-names="fx xcaddy"
+cd /tmp/
 
-pkgs='github.com/antonmedv/fx'
-pkgs="$pkgs github.com/caddyserver/xcaddy"
+if [ ! -f "$bindir" ]; then
+  filename="bin_0.17.5_${release}_${arch}"
+
+  wget "https://github.com/marcosnils/bin/releases/download/"\
+  "v0.17.5/${filename}"
+
+  chmod a+x "${filename}"
+
+  "${filename}" install github.com/marcosnils/bin
+fi
+
+names="\
+fx \
+sysz \
+yq \
+xcaddy \
+"
+
+pkgs=''
+pkgs="$pkgs github.com/antonmedv/fx@34.0.0"
+pkgs="$pkgs github.com/caddyserver/xcaddy@0.41"
 
 if ! command -v go; then
   zsh ~/.files/install/golang.sh
@@ -29,7 +50,18 @@ for pkg in $pkgs; do
 done
 
 for name in $names; do
+  sudo chmod a+x /root/go/bin/"${name}"
   sudo ln -s /root/go/bin/"${name}" /usr/local/bin/
 done
+
+if [ ! -f "$bindir/sysz" ]; then
+  bin install github.com/joehillen/sysz
+fi
+
+if [ ! -f "$bindir/yq" ]; then
+  __echo__ "Remember to choose yq_linux_amd64 when presented with multiple matches!"
+
+  bin install github.com/mikefarah/yq
+fi
 
 __echo__ "installed to /usr/local/bin/ => $pkgs"

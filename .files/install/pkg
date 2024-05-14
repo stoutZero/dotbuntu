@@ -14,7 +14,7 @@ release_name="$(get_release_name)"
 arch="$(get_arch)"
 
 pkgs="software-properties-common \
-brotli \
+btop \
 bzip2 \
 curl \
 dnsutils \
@@ -35,8 +35,7 @@ zstd"
 
 cd /tmp || exit
 
-if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]
-then
+if (( $(check_ppa 'git-core') < 1))
   sudo add-apt-repository -y ppa:git-core/ppa
 fi
 

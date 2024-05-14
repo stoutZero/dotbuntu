@@ -9,27 +9,19 @@ source ~/.files/_install_funcs.sh
 os="$(get_platform)"
 arch="$(get_arch)"
 
-if ! command -v go; then
+if ! command -v go > /dev/null 2>&1; then
   zsh ~/.files/install/golang.sh
 fi
 
-__echo__ 'downloading latest caddy release from github'
-
-version=$(gh_dl $repo "*_${os}_${arch}.deb")
-version="${version//v/}"
-
-__echo__ 'latest caddy release downloaded'
-
-filename="caddy_${version}_${os}_${arch}.deb"
-
-__echo__ 'installing caddy'
-
-sudo dpkg -i "${filename}"
-rm -f "${filename}"
-
-if [ -f /usr/bin/caddy ]; then
-  echo 'setcap to /usr/bin/caddy'
-  sudo setcap 'cap_net_bind_service=+ep' /usr/bin/caddy
+if ! command -v caddy > /dev/null 2>&1; then
+  xcaddy build \
+    --with github.com/caddy-dns/cloudflare \
+    --with github.com/caddyserver/transform-encoder
 fi
 
-__echo__ 'caddy installed'
+if [ -f /usr/local/bin/caddy ]; then
+  echo 'setcap to /usr/local/bin/caddy'
+  sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+fi
+
+__echo__ 'installed: caddy with extra modules'
