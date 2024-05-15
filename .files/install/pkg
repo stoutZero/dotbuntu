@@ -13,6 +13,50 @@ release_name="$(get_release_name)"
 
 arch="$(get_arch)"
 
+bindir=/usr/local/bin
+
+cd /tmp/ || exit
+
+if [ ! -f "$bindir/bin" ]; then
+  filename="bin_0.17.5_${release}_${arch}"
+
+  wget "https://github.com/marcosnils/bin/releases/download/"\
+  "v0.17.5/${filename}"
+
+  sudo chmod a+x "${filename}"
+
+  "${filename}" install github.com/marcosnils/bin
+
+  sudo chmod a+x "$bindir/bin"
+fi
+
+cd /tmp || exit
+
+if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]; then
+  sudo add-apt-repository -y ppa:git-core/ppa
+fi
+
+if [ "18.04" != "${release}" ] ; then
+  pkgs="${pkgs} fzf micro"
+fi
+
+if (( $(check_ppa 'githubcli') < 1)); then
+  install_keyring
+
+  wget -qO- \
+    https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    > /dev/null
+
+  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+
+  echo "deb [arch=${arch} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list \
+    > /dev/null
+
+  sudo apt update
+fi
+
 pkgs="software-properties-common \
 btop \
 bzip2 \
@@ -31,17 +75,9 @@ unhide \
 wget \
 whois \
 zip \
-zstd"
-
-cd /tmp || exit
-
-if (( $(check_ppa 'git-core') < 1))
-  sudo add-apt-repository -y ppa:git-core/ppa
-fi
-
-if [ "18.04" != "${release}" ] ; then
-  pkgs="${pkgs} fzf micro"
-fi
+zstd \
+gh \
+"
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
 
@@ -50,27 +86,38 @@ _apt="sudo apt install -y ${pkgs}"
 echo "$_apt"
 eval "$_apt"
 
+if command -v docker > /dev/null 2>&1; then
+  DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
+    | grep '"tag_name":' \
+    | sed -E 's/.*"v([^"]+)".*/\1/')
 
-if ! command -v gh > /dev/null 2>&1 ; then
-  install_keyring
 
-  wget -qO- \
-    https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-    > /dev/null
+  if ! command -v dive > /dev/null 2>&1 || [[ "$DIVE_VERSION" != $(dive version | awk -F' ' '{print $2}') ]]; then
+    curl -OL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
 
-  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    sudo apt install "./dive_${DIVE_VERSION}_linux_amd64.deb"
+  fi
 
-  echo "deb [arch=${arch} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-    | sudo tee /etc/apt/sources.list.d/github-cli.list \
-    > /dev/null 
-
-  sudo apt update 
-
-  sudo apt install -y gh
+  if ! command -v ctop > /dev/null 2>&1; then
+    sudo wget https://github.com/bcicen/ctop/releases/download/v0.7.7/ctop-0.7.7-linux-amd64 -O /usr/local/bin/ctop
+    sudo chmod +x /usr/local/bin/ctop
+  fi
 fi
 
-if [ "18.04" == "${release}" ] ; then
+if ! command -v broot > /dev/null 2>&1; then
+  curl -OL https://dystroy.org/broot/download/x86_64-linux/broot
+  sudo mv broot /usr/local/bin
+  sudo chmod a+x /usr/local/bin/broot
+fi
+
+if command -v broot > /dev/null 2>&1 ; then
+  # shellcheck disable=SC2016
+  echo '# generated from: `broot --print-shell-function zsh` ' \
+    >> ~/.files/extra.sh
+  broot --print-shell-function zsh >> ~/.files/extra.sh
+fi
+
+if [ "18.04" = "${release}" ] ; then
   __echo__ 'installing micro & fzf'
 
   curl https://getmic.ro | bash
@@ -108,6 +155,19 @@ if ! command -v bat > /dev/null 2>&1 ; then
   rm -f "$patt"
 
   __echo__ 'installed: bat'
+fi
+
+if [ ! -f /usr/local/bin/sysz ]; then
+  sudo bin install github.com/joehillen/sysz
+  sudo chmod a+x "$bindir/sysz"
+  sudo chown -h nobody:nogroup "$bindir/sysz"
+fi
+
+if [ ! -f /usr/local/bin/yq ]; then
+  __echo__ "Remember to choose yq_linux_amd64 when presented with multiple matches!"
+
+  sudo bin install github.com/mikefarah/yq
+  sudo chmod a+x "$bindir/yq"
 fi
 
 __echo__ 'essential packages installed'

@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-sudo echo "starting sudo" > /dev/null 2>&1
-
 # shellcheck disable=SC1090
 source ~/.files/functions.sh
 
@@ -10,58 +8,32 @@ source ~/.files/_install_funcs.sh
 
 __echo__ 'installing go packages as root'
 
-release="$(get_release)"
-release_name="$(get_release_name)"
+names="duf fx xcaddy"
 
-arch="$(get_arch)"
-
-cd /tmp/
-
-if [ ! -f "$bindir" ]; then
-  filename="bin_0.17.5_${release}_${arch}"
-
-  wget "https://github.com/marcosnils/bin/releases/download/"\
-  "v0.17.5/${filename}"
-
-  chmod a+x "${filename}"
-
-  "${filename}" install github.com/marcosnils/bin
-fi
-
-names="\
-fx \
-sysz \
-yq \
-xcaddy \
-"
-
-pkgs=''
-pkgs="$pkgs github.com/antonmedv/fx@34.0.0"
-pkgs="$pkgs github.com/caddyserver/xcaddy@0.41"
-
-if ! command -v go; then
+if ! command -v go > /dev/null 2>&1; then
   zsh ~/.files/install/golang.sh
 fi
 
-__echo__ "installing: $pkgs"
+__echo__ "installing: $names"
 
-for pkg in $pkgs; do
-  sudo go install "${pkg}"
+sudo go install github.com/muesli/duf@latest
+sudo go install github.com/antonmedv/fx@34.0.0
+sudo go install github.com/caddyserver/xcaddy@latest
+
+rootbin=/root/go/bin
+bindir=/usr/local/bin
+
+for name in duf fx xcaddy; do
+  sudo chmod a+x "$rootbin/$name"
+
+  sudo chown nobody:nogroup "$rootbin/$name"
+
+  [ -f "$bindir/$name" ] && sudo rm -f "$bindir/$name"
+  [ -L "$bindir/$name" ] && sudo rm -f "$bindir/$name"
+
+  sudo mv "$rootbin/$name" "$bindir"
+
+  sudo chown -h nobody:nogroup "$bindir/$name"
 done
 
-for name in $names; do
-  sudo chmod a+x /root/go/bin/"${name}"
-  sudo ln -s /root/go/bin/"${name}" /usr/local/bin/
-done
-
-if [ ! -f "$bindir/sysz" ]; then
-  bin install github.com/joehillen/sysz
-fi
-
-if [ ! -f "$bindir/yq" ]; then
-  __echo__ "Remember to choose yq_linux_amd64 when presented with multiple matches!"
-
-  bin install github.com/mikefarah/yq
-fi
-
-__echo__ "installed to /usr/local/bin/ => $pkgs"
+__echo__ "installed to /usr/local/bin/ => $names"

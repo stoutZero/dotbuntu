@@ -27,11 +27,13 @@ get_platform () {
   echo "$(uname -s | tr '[:upper:]' '[:lower:]')"
 }
 
+# returns 18.04, 22.04, etc.
 get_release () {
   # shellcheck disable=SC2005
   echo "$(lsb_release -sr)"
 }
 
+# returns bionic, focal, jammy, etc.
 get_release_name () {
   # shellcheck disable=SC2005
   echo "$(lsb_release -sc)"
@@ -62,4 +64,11 @@ check_ppa () {
   fi
 
   echo count
+}
+
+line_in_file () {
+  line="$1"
+  file="$2"
+
+  echo $(grep "$line" "$file" 2>/dev/null | wc -l)
 }
