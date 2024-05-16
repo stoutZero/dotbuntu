@@ -18,10 +18,11 @@ bindir=/usr/local/bin
 cd /tmp/ || exit
 
 if [ ! -f "$bindir/bin" ]; then
-  filename="bin_0.17.5_${release}_${arch}"
+  repo=https://github.com/marcosnils/bin
+  v="$(gh_latest "$repo")"
+  filename="bin_${v}_${release}_${arch}"
 
-  wget "https://github.com/marcosnils/bin/releases/download/"\
-  "v0.17.5/${filename}"
+  wget "$repo/releases/download/v${v}/${filename}"
 
   sudo chmod a+x "${filename}"
 
@@ -99,7 +100,11 @@ if command -v docker > /dev/null 2>&1; then
   fi
 
   if ! command -v ctop > /dev/null 2>&1; then
-    sudo wget https://github.com/bcicen/ctop/releases/download/v0.7.7/ctop-0.7.7-linux-amd64 -O /usr/local/bin/ctop
+    repo=https://github.com/bcicen/ctop
+    v="$(gh_latest "$repo")"
+
+    sudo wget "$repo/releases/download/v${v}/ctop-${v}-linux-amd64" \
+      -O /usr/local/bin/ctop
     sudo chmod +x /usr/local/bin/ctop
   fi
 fi
@@ -125,9 +130,13 @@ if [ "18.04" = "${release}" ] ; then
   sudo mv ./micro /usr/local/bin
   sudo chown root: /usr/local/bin/micro
 
-  wget -q https://github.com/junegunn/fzf/releases/download/0.52.0/fzf-0.52.0-linux_"${arch}".tar.gz
+  repo=https://github.com/junegunn/fzf
+  v="$(gh_latest "$repo")"
+  filename="bin_${v}_${release}_${arch}"
 
-  tar xzf fzf-0.52.0-linux_"${arch}".tar.gz
+  wget -q "$repo/releases/download/${v}/fzf-${v}-linux_${arch}.tar.gz"
+
+  tar xzf "fzf-${v}-linux_${arch}.tar.gz"
 
   sudo mv ./fzf /usr/local/bin
   sudo chown root: /usr/local/bin/fzf
@@ -138,17 +147,11 @@ fi
 if ! command -v bat > /dev/null 2>&1 ; then
   __echo__ 'installing bat'
 
-  ver="0.24.0"
   repo=https://github.com/sharkdp/bat
-  patt="bat_${ver}_${arch}.deb"
 
-  if ! command -v gh > /dev/null 2>&1 ; then
-    ver=$(gh_dl $repo "*_${arch}.deb")
-  else
-    wget -q "${repo}/releases/download/v${ver}/${patt}"
-  fi
+  v=$(gh_dl $repo "*_${arch}.deb")
 
-  patt="bat_${ver}_${arch}.deb"
+  patt="bat_${v}_${arch}.deb"
 
   sudo dpkg -i "$patt"
 
@@ -157,16 +160,18 @@ if ! command -v bat > /dev/null 2>&1 ; then
   __echo__ 'installed: bat'
 fi
 
-if [ ! -f /usr/local/bin/sysz ]; then
-  sudo bin install github.com/joehillen/sysz
+if [ ! -f "$bindir/sysz" ]; then
+  sudo wget -q -O "$bindir/sysz" https://github.com/joehillen/sysz/releases/latest/download/sysz
   sudo chmod a+x "$bindir/sysz"
   sudo chown -h root: "$bindir/sysz"
 fi
 
-if [ ! -f /usr/local/bin/yq ]; then
-  __echo__ "Remember to choose yq_linux_amd64 when presented with multiple matches!"
+if [ ! -f "$bindir/yq" ]; then
+  repo=https://github.com/mikefarah/yq
 
-  sudo bin install github.com/mikefarah/yq
+  v="$(gh_latest "$repo")"
+
+  sudo wget -q -O "$bindir/yq" "$repo/releases/download/v${v}/yq_linux_amd64"
   sudo chmod a+x "$bindir/yq"
 fi
 
