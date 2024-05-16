@@ -26,14 +26,14 @@ bindir=/usr/local/bin
 for name in duf fx xcaddy; do
   sudo chmod a+x "$rootbin/$name"
 
-  sudo chown nobody:nogroup "$rootbin/$name"
+  sudo chown root: "$rootbin/$name"
 
   [ -f "$bindir/$name" ] && sudo rm -f "$bindir/$name"
   [ -L "$bindir/$name" ] && sudo rm -f "$bindir/$name"
 
   sudo mv "$rootbin/$name" "$bindir"
 
-  sudo chown -h nobody:nogroup "$bindir/$name"
+  sudo chown -h root: "$bindir/$name"
 done
 
 __echo__ "installed to /usr/local/bin/ => $names"

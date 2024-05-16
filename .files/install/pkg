@@ -160,7 +160,7 @@ fi
 if [ ! -f /usr/local/bin/sysz ]; then
   sudo bin install github.com/joehillen/sysz
   sudo chmod a+x "$bindir/sysz"
-  sudo chown -h nobody:nogroup "$bindir/sysz"
+  sudo chown -h root: "$bindir/sysz"
 fi
 
 if [ ! -f /usr/local/bin/yq ]; then
