@@ -17,20 +17,6 @@ bindir=/usr/local/bin
 
 cd /tmp/ || exit
 
-if [ ! -f "$bindir/bin" ]; then
-  repo=https://github.com/marcosnils/bin
-  v="$(gh_latest "$repo")"
-  filename="bin_${v}_${release}_${arch}"
-
-  wget "$repo/releases/download/v${v}/${filename}"
-
-  sudo chmod a+x "${filename}"
-
-  "${filename}" install github.com/marcosnils/bin
-
-  sudo chmod a+x "$bindir/bin"
-fi
-
 cd /tmp || exit
 
 if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]; then
@@ -86,6 +72,21 @@ _apt="sudo apt install -y ${pkgs}"
 
 echo "$_apt"
 eval "$_apt"
+
+## this requires gh & jq command which was only recently installed above
+if [ ! -f "$bindir/bin" ]; then
+  repo=https://github.com/marcosnils/bin
+  v="$(gh_latest "$repo")"
+  filename="bin_${v}_${release}_${arch}"
+
+  wget "$repo/releases/download/v${v}/${filename}"
+
+  sudo chmod a+x "${filename}"
+
+  "${filename}" install github.com/marcosnils/bin
+
+  sudo chmod a+x "$bindir/bin"
+fi
 
 if command -v docker > /dev/null 2>&1; then
   DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
