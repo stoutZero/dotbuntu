@@ -8,14 +8,14 @@ source ~/.files/_install_funcs.sh
 
 if (( $(check_ppa 'ondrej/php') < 1))
 then
-  __echo__ "adding ondrej's ppa"
+  _info "adding ondrej's ppa"
 
   sudo add-apt-repository -y ppa:ondrej/php
 
-  __echo__ "ondrej's ppa added"
+  _info "ondrej's ppa added"
 fi
 
-__echo__ 'installing php & redis via apt'
+_info 'installing php & redis via apt'
 
 sudo apt install -y php8.3-fpm \
   php8.3-cli \
@@ -35,9 +35,9 @@ sudo apt install -y php8.3-fpm \
   php8.3-zip \
   redis-server
 
-__echo__ 'php & redis installed via apt'
+_info 'php & redis installed via apt'
 
-__echo__ 'installing composer'
+_info 'installing composer'
 
 if [ ! -f /usr/local/bin/composer ]; then
   EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
@@ -59,4 +59,4 @@ if [ ! -f /usr/local/bin/composer ]; then
   fi
 fi
 
-__echo__ 'composer installed via apt'
+_info 'composer installed via apt'

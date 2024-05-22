@@ -12,14 +12,14 @@ hw="$(get_hw)"
 repo=https://github.com/dunglas/frankenphp
 filename="frankenphp-${os}-${hw}"
 
-__echo__ 'downloading latest frankenphp release from github'
+_info 'downloading latest frankenphp release from github'
 
 gh_dl "$repo" "$filename"
 version="${version//v/}"
 
-__echo__ 'latest frankenphp release downloaded'
+_info 'latest frankenphp release downloaded'
 
-__echo__ 'installing frankenphp'
+_info 'installing frankenphp'
 
 if [ -f "$filename" ]; then
   sudo mv "$filename" /usr/local/bin/frankenphp
@@ -30,4 +30,4 @@ if [ -f "$filename" ]; then
   sudo chown www-data: /usr/local/bin/frankenphp
 fi
 
-__echo__ 'frankenphp installed'
+_info 'frankenphp installed'

@@ -8,19 +8,19 @@ source ~/.files/_install_funcs.sh
 
 if (( $(check_ppa 'longsleep/golang-backports') < 1))
 then
-  __echo__ "adding ppa:longsleep/golang-backports"
+  _info "adding ppa:longsleep/golang-backports"
 
   sudo apt install -y curl ca-certificates
 
   sudo add-apt-repository -y ppa:longsleep/golang-backports
 
-  __echo__ "added: ppa:longsleep/golang-backports"
+  _info "added: ppa:longsleep/golang-backports"
 fi
 
 if ! command -v go > /dev/null 2>&1; then
   sudo apt install -y golang-go
 fi
 
-__echo__ 'golang installed, version info right below'
+_info 'golang installed, version info right below'
 
 go version

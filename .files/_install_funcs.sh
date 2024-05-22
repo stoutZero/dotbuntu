@@ -2,26 +2,31 @@
 
 # shellcheck disable=SC2148
 
-__echo__ () {
-  local lc=$'\e[' rc=m  # Standard ANSI terminal escape values
-  local blue='34'
-  local none='00'
-
+_info () {
   echo ; echo
-  echo "$fg_bold[blue][INSTALLER] ${1}${reset_color}"
+  echo "${fg_bold[blue]}[INSTALLER]${reset_color} $1"
   echo ; echo
 }
 
+_error () {
+  echo ; echo
+  echo "${fg_bold[red]}[INSTALLER:ERROR]${reset_color} $1"
+  echo ; echo
+}
+
+# returns amd64
 get_arch () {
   # shellcheck disable=SC2005
   echo "$(dpkg --print-architecture)"
 }
 
+# returns x86_64
 get_hw () {
   # shellcheck disable=SC2005
   echo "$(uname -i)"
 }
 
+# returns linux
 get_platform () {
   # shellcheck disable=SC2005
   echo "$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -52,12 +57,10 @@ install_keyring () {
 }
 
 check_ppa () {
-  ppa="$1"
-
-  count="$(grep -ri "$ppa" /etc/apt/sources.list.d | wc -l 2>/dev/null)"
+  count="$(grep -ri "$1" /etc/apt/sources.list.d | wc -l 2>/dev/null)"
   RETVAL=$?
 
-  if [[ RETVAL != 0 ]]
+  if [[ $RETVAL != 0 ]]
   then
     echo 0
     exit -1

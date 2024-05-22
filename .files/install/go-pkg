@@ -6,7 +6,7 @@ source ~/.files/functions.sh
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-__echo__ 'installing go packages as root'
+_info 'installing go packages as root'
 
 names="duf fx xcaddy"
 
@@ -14,7 +14,7 @@ if ! command -v go > /dev/null 2>&1; then
   zsh ~/.files/install/golang.sh
 fi
 
-__echo__ "installing: $names"
+_info "installing: $names"
 
 sudo go install github.com/muesli/duf@latest
 sudo go install github.com/antonmedv/fx@34.0.0
@@ -36,4 +36,4 @@ for name in duf fx xcaddy; do
   sudo chown -h root: "$bindir/$name"
 done
 
-__echo__ "installed to /usr/local/bin/ => $names"
+_info "installed to /usr/local/bin/ => $names"

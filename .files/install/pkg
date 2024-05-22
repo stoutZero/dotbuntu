@@ -6,7 +6,7 @@ source ~/.files/functions.sh
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-__echo__ 'installing essential packages'
+_info 'installing essential packages'
 
 release="$(get_release)"
 release_name="$(get_release_name)"
@@ -17,51 +17,69 @@ bindir=/usr/local/bin
 
 cd /tmp/ || exit
 
-cd /tmp || exit
+pkgs="software-properties-common \
+bzip2 \
+curl \
+dnsutils \
+gzip \
+htop \
+nano \
+traceroute \
+tree \
+wget \
+whois \
+zip \
+"
+
+pkgs="$(echo "$pkgs" | tr -d '\n')"
+
+_apt="sudo apt install -y ${pkgs}"
+
+echo "$_apt"
+eval "$_apt > /dev/null 2>&1"
 
 if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]; then
-  sudo add-apt-repository -y ppa:git-core/ppa
-fi
-
-if [ "18.04" != "${release}" ] ; then
-  pkgs="${pkgs} fzf micro"
+  _info 'adding: ppa:git-core/ppa'
+  sudo add-apt-repository -y ppa:git-core/ppa > /dev/null 2>&1
+  _info 'added: ppa:git-core/ppa'
 fi
 
 if (( $(check_ppa 'githubcli') < 1)); then
   install_keyring
 
-  wget -qO- \
-    https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-    | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg \
-    > /dev/null
+  gpg_name="githubcli-archive-keyring.gpg"
+  gpg_path="/etc/apt/keyrings/$gpg_name"
 
-  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  curl --connect-timeout 2 --silent --head --fail \
+    "https://cli.github.com/packages/$gpg_name" > /dev/null 2>&1
 
-  echo "deb [arch=${arch} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-    | sudo tee /etc/apt/sources.list.d/github-cli.list \
-    > /dev/null
+  if [ $? -eq 0 ]; then
+    _info 'adding: gh-cli repo'
 
-  sudo apt update
+    sudo wget -qO- "/etc/apt/keyrings/$gpg_name" \
+      "https://cli.github.com/packages/$gpg_name" \
+       > /dev/null 2>&1
+
+    sudo chmod go+r $gpg_path
+    
+    echo "deb [arch=$arch signed-by=$gpg_path] https://cli.github.com/packages stable main" \
+      | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+    sudo chmod go+r /etc/apt/sources.list.d/github-cli.list
+
+    sudo apt update > /dev/null 2>&1
+
+    _info 'added: gh-cli repo'
+  else
+    _error "can't install gh-cli, can't seem to connect to cli.github.com"
+  fi
 fi
 
-pkgs="software-properties-common \
-btop \
-bzip2 \
-curl \
-dnsutils \
-fail2ban \
+pkgs="fail2ban \
 git \
-gzip \
 jq \
-htop \
-nano \
 redis-server \
-traceroute \
-tree \
 unhide \
-wget \
-whois \
-zip \
 zstd \
 gh \
 "
@@ -71,49 +89,17 @@ pkgs="$(echo "$pkgs" | tr -d '\n')"
 _apt="sudo apt install -y ${pkgs}"
 
 echo "$_apt"
-eval "$_apt"
-
-## this requires gh & jq command which was only recently installed above
-if [ ! -f "$bindir/bin" ]; then
-  repo=https://github.com/marcosnils/bin
-  v="$(gh_latest "$repo")"
-  filename="bin_${v}_${release}_${arch}"
-
-  wget "$repo/releases/download/v${v}/${filename}"
-
-  sudo chmod a+x "${filename}"
-
-  "${filename}" install github.com/marcosnils/bin
-
-  sudo chmod a+x "$bindir/bin"
-fi
-
-if command -v docker > /dev/null 2>&1; then
-  DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
-    | grep '"tag_name":' \
-    | sed -E 's/.*"v([^"]+)".*/\1/')
-
-
-  if ! command -v dive > /dev/null 2>&1 || [[ "$DIVE_VERSION" != $(dive version | awk -F' ' '{print $2}') ]]; then
-    curl -OL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
-
-    sudo apt install "./dive_${DIVE_VERSION}_linux_amd64.deb"
-  fi
-
-  if ! command -v ctop > /dev/null 2>&1; then
-    repo=https://github.com/bcicen/ctop
-    v="$(gh_latest "$repo")"
-
-    sudo wget "$repo/releases/download/v${v}/ctop-${v}-linux-amd64" \
-      -O /usr/local/bin/ctop
-    sudo chmod +x /usr/local/bin/ctop
-  fi
-fi
+eval "$_apt > /dev/null 2>&1"
 
 if ! command -v broot > /dev/null 2>&1; then
-  curl -OL https://dystroy.org/broot/download/x86_64-linux/broot
-  sudo mv broot /usr/local/bin
-  sudo chmod a+x /usr/local/bin/broot
+  _info 'installing: ctop'
+
+  curl --silent -OL \
+    https://dystroy.org/broot/download/x86_64-linux/broot
+  sudo mv broot /usr/local/bin > /dev/null 2>&1
+  sudo chmod a+x /usr/local/bin/broot > /dev/null 2>&1
+
+  _info 'installed: ctop'
 fi
 
 if command -v broot > /dev/null 2>&1 ; then
@@ -123,30 +109,43 @@ if command -v broot > /dev/null 2>&1 ; then
   broot --print-shell-function zsh >> ~/.files/extra.sh
 fi
 
-if [ "18.04" = "${release}" ] ; then
-  __echo__ 'installing micro & fzf'
+if ! command -v micro > /dev/null 2>&1 ; then
+  _info 'installing: micro'
 
-  curl https://getmic.ro | bash
+  curl -sSL https://getmic.ro | bash > /dev/null 2>&1
 
-  sudo mv ./micro /usr/local/bin
-  sudo chown root: /usr/local/bin/micro
+  sudo mv ./micro /usr/local/bin > /dev/null 2>&1
+  sudo chown root: /usr/local/bin/micro > /dev/null 2>&1
+
+  _info "micro installed to: "$(command -v micro)""
+
+  _info 'installed: micro'
+fi
+
+
+if ! command -v fzf > /dev/null 2>&1 ; then
+  _info 'installing: fzf'
 
   repo=https://github.com/junegunn/fzf
   v="$(gh_latest "$repo")"
-  filename="bin_${v}_${release}_${arch}"
 
-  wget -q "$repo/releases/download/${v}/fzf-${v}-linux_${arch}.tar.gz"
+  wget -qO \
+    "$repo/releases/download/${v}/fzf-${v}-linux_${arch}.tar.gz" \
+     > /dev/null 2>&1
 
-  tar xzf "fzf-${v}-linux_${arch}.tar.gz"
+  tar xzf "fzf-${v}-linux_${arch}.tar.gz" > /dev/null 2>&1
 
-  sudo mv ./fzf /usr/local/bin
-  sudo chown root: /usr/local/bin/fzf
+  sudo mv ./fzf /usr/local/bin > /dev/null 2>&1
+  sudo chown root: /usr/local/bin/fzf > /dev/null 2>&1
+  sudo chown a+x /usr/local/bin/fzf > /dev/null 2>&1
 
-  __echo__ 'installed: micro & fzf'
+  _info "fzf installed to: "$(command -v fzf)""
+
+  _info 'installed: fzf'
 fi
 
 if ! command -v bat > /dev/null 2>&1 ; then
-  __echo__ 'installing bat'
+  _info 'installing: bat'
 
   repo=https://github.com/sharkdp/bat
 
@@ -154,26 +153,43 @@ if ! command -v bat > /dev/null 2>&1 ; then
 
   patt="bat_${v}_${arch}.deb"
 
-  sudo dpkg -i "$patt"
+  sudo dpkg -i "$patt" > /dev/null 2>&1
 
-  rm -f "$patt"
+  rm -f "$patt" > /dev/null 2>&1
 
-  __echo__ 'installed: bat'
+  _info "bat installed to: "$(command -v bat)""
+
+  _info 'installed: bat'
 fi
 
 if [ ! -f "$bindir/sysz" ]; then
-  sudo wget -q -O "$bindir/sysz" https://github.com/joehillen/sysz/releases/latest/download/sysz
-  sudo chmod a+x "$bindir/sysz"
-  sudo chown -h root: "$bindir/sysz"
+  wget -qO "$bindir/sysz" \
+    https://github.com/joehillen/sysz/releases/latest/download/sysz \
+      > /dev/null 2>&1
+
+  sudo chmod a+x "$bindir/sysz" > /dev/null 2>&1
+
+  _info "sysz installed to: "$(command -v sysz)""
+
+  _info "installed: https://github.com/joehillen/sysz"
 fi
 
 if [ ! -f "$bindir/yq" ]; then
+  _info 'installing: yq'
+
   repo=https://github.com/mikefarah/yq
 
   v="$(gh_latest "$repo")"
 
-  sudo wget -q -O "$bindir/yq" "$repo/releases/download/v${v}/yq_linux_amd64"
-  sudo chmod a+x "$bindir/yq"
+  sudo wget -qO "$bindir/yq" \
+    "$repo/releases/download/v${v}/yq_linux_amd64" \
+     > /dev/null 2>&1
+
+  sudo chmod a+x "$bindir/yq" > /dev/null 2>&1
+
+  _info "yq installed to: "$(command -v yq)""
+
+  _info 'installed: yq'
 fi
 
-__echo__ 'essential packages installed'
+_info 'essential packages installed'

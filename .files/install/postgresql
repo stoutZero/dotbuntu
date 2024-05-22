@@ -17,8 +17,8 @@ if [ ! -f /etc/apt/sources.list.d/pgdg.list ]; then
   sudo apt update
 fi
 
-__echo__ 'installing postgresql-16'
+_info 'installing postgresql-16'
 
 sudo apt -y install postgresql-16
 
-__echo__ 'postgresql-16 installed'
+_info 'postgresql-16 installed'
