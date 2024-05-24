@@ -44,36 +44,7 @@ if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]; 
   _info 'added: ppa:git-core/ppa'
 fi
 
-if (( $(check_ppa 'githubcli') < 1)); then
-  install_keyring
-
-  gpg_name="githubcli-archive-keyring.gpg"
-  gpg_path="/etc/apt/keyrings/$gpg_name"
-
-  curl --connect-timeout 2 --silent --head --fail \
-    "https://cli.github.com/packages/$gpg_name" > /dev/null 2>&1
-
-  if [ $? -eq 0 ]; then
-    _info 'adding: gh-cli repo'
-
-    sudo wget -qO- "/etc/apt/keyrings/$gpg_name" \
-      "https://cli.github.com/packages/$gpg_name" \
-       > /dev/null 2>&1
-
-    sudo chmod go+r $gpg_path
-    
-    echo "deb [arch=$arch signed-by=$gpg_path] https://cli.github.com/packages stable main" \
-      | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-
-    sudo chmod go+r /etc/apt/sources.list.d/github-cli.list
-
-    sudo apt update > /dev/null 2>&1
-
-    _info 'added: gh-cli repo'
-  else
-    _error "can't install gh-cli, can't seem to connect to cli.github.com"
-  fi
-fi
+zsh ~/.files/install/gh-cli
 
 pkgs="fail2ban \
 git \
