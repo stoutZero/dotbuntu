@@ -52,7 +52,6 @@ jq \
 redis-server \
 unhide \
 zstd \
-gh \
 "
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
