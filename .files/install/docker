@@ -55,10 +55,6 @@ fi
 
 _info 'installing: docker-ce & co'
 
-if ! command -v runsc > /dev/null 2>&1 ; then
-  pkgs="${pkgs} runsc"
-fi
-
 if [ "" != "$pkgs" ]; then
   sudo apt update
 
