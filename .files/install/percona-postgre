@@ -6,7 +6,7 @@ source ~/.files/functions.sh
 # shellcheck disable=SC1090
 source ~/.files/_install_funcs.sh
 
-_info 'installing essential packages'
+_info "installing: percona's postgresql"
 
 release_name="$(get_release_name)"
 
@@ -14,9 +14,11 @@ deb="percona-release_latest.${release_name}_all.deb"
 
 wget -q "https://repo.percona.com/apt/$deb"
 
-dpkg -i $deb
+sudo dpkg -i $deb
 
 sudo apt update
 sudo percona-release setup ppg-16
-sudo apt install percona-ppg-server-16
-sudo systemctl status postgresql.service 
+sudo apt -y install percona-ppg-server-16
+sudo systemctl status postgresql.service
+
+_info "installed: percona's postgresql"

@@ -92,9 +92,9 @@ if command -v docker > /dev/null 2>&1; then
   _info 'installing: ctop'
 
     repo=https://github.com/bcicen/ctop
-    v="$(gh_latest "$repo")"
+    v="$(gh_latest "$repo" | tr -d v)"
 
-    sudo wget -sSL \
+    sudo wget \
       "$repo/releases/download/v${v}/ctop-${v}-linux-amd64" \
       -O /usr/local/bin/ctop
     sudo chmod +x /usr/local/bin/ctop > /dev/null 2>&1
