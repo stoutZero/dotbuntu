@@ -62,21 +62,20 @@ echo "$_apt"
 eval "$_apt"
 
 if ! command -v broot; then
-  _info 'installing: ctop'
+  _info 'installing: broot'
 
   curl --silent -OL \
     https://dystroy.org/broot/download/x86_64-linux/broot
   sudo mv broot /usr/local/bin
+
   sudo chmod a+x /usr/local/bin/broot
 
-  _info 'installed: ctop'
-fi
-
-if command -v broot ; then
   # shellcheck disable=SC2016
   echo '# generated from: `broot --print-shell-function zsh` ' \
     >> ~/.files/extra.sh
   broot --print-shell-function zsh >> ~/.files/extra.sh
+
+  _info 'installed: broot'
 fi
 
 if ! command -v micro ; then
