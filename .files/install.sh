@@ -38,18 +38,20 @@ if [[ "$(basename "$SHELL")" != "zsh" ]]; then
   echo 'default shell changed'
 fi
 
+if [[ -f $ZSH/custom/themes/mortalscumbag-ssh.zsh-theme ] && [ -f ~/.files/mortalscumbag-ssh.zsh-theme.sh ]]; then
+  cp -an ~/.files/mortalscumbag-ssh.zsh-theme.sh
+fi
+
+if [ ! -f ~/.gitconfig ]; then
+  cp ~/.files/gitconfig-example.sh ~/.gitconfig
+fi
+
+if [ ! -f ~/.zshrc ]; then
+  cp ~/.files/zshrc-example.sh ~/.zshrc
+fi
+
 mkdir -p ~/tmp
 
-usr="$(whoami)"
+[ ! -f ~/.github-token ] && touch ~/.github-token
 
-if [ ! -f "/etc/sudoers.d/${usr}" ]; then
-  echo "adding user ${usr} to sudo"
-
-  echo "${usr} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${usr}"
-
-  echo "user ${usr} added to sudo"
-fi
-
-if [ ! -f ~/.github-token ]; then
-  touch ~/.github-token
-fi
+[ ! -f ~/.discord.url ] && touch ~/.discord.url

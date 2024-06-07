@@ -4,10 +4,13 @@
 # Make nano the default editor
 export EDITOR="nano";
 
-# Larger bash history (allow 32³ entries; default is 500)
-export HISTSIZE=32768;
+export HISTSIZE=1000000000
+export SAVEHIST=$HISTSIZE
 export HISTFILESIZE=$HISTSIZE;
 export HISTCONTROL=ignoredups;
+
+setopt HIST_IGNORE_ALL_DUPS
+setopt EXTENDED_HISTORY
 
 # Make some commands not show up in history
 export HISTIGNORE="exit:date:clear:history";

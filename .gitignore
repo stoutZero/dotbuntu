@@ -2,7 +2,6 @@
 
 # Blacklist everything
 *
-/.files/extra.sh
 
 # Whitelist individual items
 !README
@@ -11,7 +10,6 @@
 !.gitconfig
 !.gitaliases
 !.gitignore
-!.zshrc
 
 !/.zshd/
 !/.files/

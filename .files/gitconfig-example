@@ -1,0 +1,4 @@
+[include]
+  path = ~/.gitaliases
+[safe]
+  directory = /dotbuntu/.git
