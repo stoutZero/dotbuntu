@@ -1,10 +1,6 @@
-# .zshrc
-# Path to your oh-my-zsh configuration.
+# shellcheck disable=SC2034,SC1090,SC1091
 ZSH=~/.zshd
-ZSHDOT=~/.zshd
-ZDOT=~/.zshd
 
-# Look in $ZSH/themes/
 if [ -f $ZSH/custom/themes/mortalscumbag-ssh.zsh-theme ]; then
   ZSH_THEME="mortalscumbag-ssh"
 else
@@ -51,7 +47,7 @@ plugins=(
 [[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
 
 # pnpm
-export PNPM_HOME="~/.local/share/pnpm"
+export PNPM_HOME=~/.local/share/pnpm
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -63,6 +59,6 @@ esac
 # * ~/extra.sh can be used for other settings you don’t want to commit.
 for file in ~/.files/{exports,path,prompt,aliases,functions,extra}.sh;
 do
-  [[ -r "$file" ] && [ -f "$file" ]] && source "$file";
+  [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file

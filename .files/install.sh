@@ -38,8 +38,10 @@ if [[ "$(basename "$SHELL")" != "zsh" ]]; then
   echo 'default shell changed'
 fi
 
-if [[ -f $ZSH/custom/themes/mortalscumbag-ssh.zsh-theme ] && [ -f ~/.files/mortalscumbag-ssh.zsh-theme.sh ]]; then
-  cp -an ~/.files/mortalscumbag-ssh.zsh-theme.sh
+if [ ! -f ~/.zshd/custom/themes/mortalscumbag-ssh.zsh-theme ] \
+  && [ -f ~/.files/mortalscumbag-ssh.zsh-theme.sh ]; then
+  cp -an ~/.files/mortalscumbag-ssh.zsh-theme.sh \
+    ~/.zshd/custom/themes/
 fi
 
 if [ ! -f ~/.gitconfig ]; then
