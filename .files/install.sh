@@ -45,11 +45,11 @@ if [ ! -f ~/.zshd/custom/themes/mortalscumbag-ssh.zsh-theme ] \
 fi
 
 if [ ! -f ~/.gitconfig ]; then
-  cp ~/.files/gitconfig-example.sh ~/.gitconfig
+  cp ~/.files/gitconfig-example ~/.gitconfig
 fi
 
 if [ ! -f ~/.zshrc ]; then
-  cp ~/.files/zshrc-example.sh ~/.zshrc
+  cp ~/.files/zshrc-example ~/.zshrc
 fi
 
 mkdir -p ~/tmp
