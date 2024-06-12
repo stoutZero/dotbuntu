@@ -39,8 +39,8 @@ if [[ "$(basename "$SHELL")" != "zsh" ]]; then
 fi
 
 if [ ! -f ~/.zshd/custom/themes/mortalscumbag-ssh.zsh-theme ] \
-  && [ -f ~/.files/mortalscumbag-ssh.zsh-theme.sh ]; then
-  cp -an ~/.files/mortalscumbag-ssh.zsh-theme.sh \
+  && [ -f ~/.files/mortalscumbag-ssh.zsh-theme ]; then
+  cp -an ~/.files/mortalscumbag-ssh.zsh-theme \
     ~/.zshd/custom/themes/
 fi
 
