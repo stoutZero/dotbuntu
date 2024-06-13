@@ -5,6 +5,8 @@ if ! command -v zsh > /dev/null 2>&1 ; then
   sudo apt install -y zsh
   echo
   echo 'zsh installed'
+else
+  echo 'zsh already installed'
 fi
 
 if [ ! -f ~/.zshd/README.md ]; then
@@ -18,6 +20,8 @@ if [ ! -f ~/.zshd/README.md ]; then
 
   echo
   echo 'git submodules fetched'
+else
+  echo '.zshd already installed'
 fi
 
 if [ ! -d ~/.zshd/custom/plugins/nice-exit-code ]; then
@@ -27,6 +31,8 @@ if [ ! -d ~/.zshd/custom/plugins/nice-exit-code ]; then
     ~/.zshd/custom/plugins/nice-exit-code
   echo
   echo 'nice-exit-code cloned'
+else
+  echo 'nice-exit-code already installed'
 fi
 
 
@@ -36,20 +42,28 @@ if [[ "$(basename "$SHELL")" != "zsh" ]]; then
   chsh -s "$(command -v zsh)"
   echo
   echo 'default shell changed'
+else
+  echo 'default shell is already zsh'
 fi
 
 if [ ! -f ~/.zshd/custom/themes/mortalscumbag-ssh.zsh-theme ] \
   && [ -f ~/.files/mortalscumbag-ssh.zsh-theme ]; then
   cp -an ~/.files/mortalscumbag-ssh.zsh-theme \
     ~/.zshd/custom/themes/
+else
+  echo 'mortalscumbag-ssh.zsh-theme already exists'
 fi
 
 if [ ! -f ~/.gitconfig ]; then
   cp ~/.files/gitconfig-example ~/.gitconfig
+else
+  echo '~/.gitconfig already exists'
 fi
 
 if [ ! -f ~/.zshrc ]; then
   cp ~/.files/zshrc-example ~/.zshrc
+else
+  echo '~/.zshrc already exists'
 fi
 
 mkdir -p ~/tmp
