@@ -17,6 +17,10 @@ alias cela='clear; els -l -a -h '
 alias cla='clear; ls -lash '
 alias clone='git clone '
 
+alias d='docker '
+alias dc='docker compose '
+alias dcx='docker compose exec '
+
 alias dfh='df -h '
 alias duh='du -h '
 
