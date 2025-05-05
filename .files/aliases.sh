@@ -23,8 +23,6 @@ else
   alias cla='clear && ls -laah '
 fi
 
-alias port='sudo lsof -P -i :'
-
 alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
 
 alias c='composer '

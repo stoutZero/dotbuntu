@@ -3,7 +3,7 @@
 
 _completemarks () { reply=($(ls $MARKPATH)) ; }
 
-port () { sudo lsof -P -i ":${1}" }
+function port { sudo lsof -P -i ":${1}" }
 
 psg () {
   ps aux | grep $(echo $1 | sed "s/^\(.\)/[\1]/g")
