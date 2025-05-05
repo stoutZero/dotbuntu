@@ -12,9 +12,22 @@ alias a='php artisan'
 # (useful when executing time-consuming commands)
 alias badge="tput bel"
 
+if [ "x$(command -v eza)" != 'x' ]; then
+  alias e='eza -laah '
+  alias la='eza -laah '
+  alias lla='eza -laah '
+  alias cla='clear && eza -laah '
+else
+  alias la='ls -laah '
+  alias lla='ls -laah '
+  alias cla='clear && ls -laah '
+fi
+
+alias port='sudo lsof -P -i :'
+
+alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
+
 alias c='composer '
-alias cela='clear; els -l -a -h '
-alias cla='clear; ls -lash '
 alias clone='git clone '
 
 alias d='docker '
@@ -26,7 +39,6 @@ alias duh='du -h '
 
 alias edit='$EDITOR'
 
-alias ela='els -l -a -h '
 alias empty='truncate -s0 '
 
 if ! command -v frankenphp > /dev/null 2>&1 ; then
@@ -56,7 +68,6 @@ alias j="jobs"
 
 alias k9='kill -9 '
 
-alias lla='ls -lash '
 alias lns='ln -s'
 
 alias mkdir='mkdir -p '

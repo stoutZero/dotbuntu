@@ -1,7 +1,9 @@
-# shellcheck disable=SC2148
+ # shellcheck disable=SC2148
 # SC2148: Tips
 
 _completemarks () { reply=($(ls $MARKPATH)) ; }
+
+port () { sudo lsof -P -i ":${1}" }
 
 psg () {
   ps aux | grep $(echo $1 | sed "s/^\(.\)/[\1]/g")
@@ -301,7 +303,7 @@ tarbr () {
 # Create a .tar.zst archive, using `zstd` for compression
 tarzst () {
   if [ $# -eq 0 ];then
-    printf "No arguments specified.\nUsage:\n tarzst <directory> <CORES: 1..N> <COMPRESSION: 1..19>">&2
+    printf "No arguments specified.\nUsage:\n tarzst <directory> <CORES: 1..N> <COMPRESSION: 1..22>">&2
 
     return 1
   fi
@@ -317,7 +319,13 @@ tarzst () {
   _c="${2:-1}"
   _z="${3:-3}"
 
-  _zst="zstd -T${_c} -z -${_z}"
+  if [[ "$_z" -gt 19  ]]; then
+    _z="--ultra -${_z}"
+  else
+    _z="-${_z}"
+  fi
+
+  _zst="zstd -T${_c} -z ${_z}"
   _cmd="tar cf - '${1}' | ${_zst} > '${outFile}'";
 
   echo -n "Compressing '${1}' into '${outFile}' with zstd (cores: ${_c}, comp: ${_z})... ";
@@ -344,16 +352,12 @@ unidecode () {
   fi;
 }
 
-unmark () { rm -i "$MARKPATH/$1" ; }
-
-ports () { sudo lsof -iTCP -sTCP:LISTEN -P ; }
+unmark () { rm -i "$MARKPATH/$1" }
 
 pwdx () {
   sudo lsof -a -d cwd -p "$1" -n -Fn \
   | awk '/^n/ {print substr($0,2)}'
 }
-
-lsofpi () { sudo lsof -P -i ":${1}" ; }
 
 notify_discord () {
   machine=$(hostname)
