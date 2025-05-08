@@ -13,14 +13,24 @@ alias a='php artisan'
 alias badge="tput bel"
 
 if [ "x$(command -v eza)" != 'x' ]; then
-  alias e='eza -laah '
-  alias la='eza -laah '
-  alias lla='eza -laah '
-  alias cla='clear && eza -laah '
+  local _l='eza --follow-symlinks --long --classify --group --all --header --links '
+  alias  e='eza '
+  alias  l="${_l}"
+  alias la="${_l} --all "
+  alias lx="${_l} --extended "
 else
-  alias la='ls -laah '
-  alias lla='ls -laah '
-  alias cla='clear && ls -laah '
+  # -l: long
+  # -@: extended when long
+  # -B: print of non-printable characters as \xxx
+  # -F: classify each line
+  # -a: print . and ..
+  # -s: print block size
+  # -h: humane base-2 file sizes
+  # -H: follow-symlinks
+  local _l='echo COLS: MODE,LINKS,USER,GROUP,SIZE,MTIME,NAME ; \ls -lBFhH'
+  alias  l="${_l}"
+  alias la="${_l} -a "
+  alias lx="${_l} -@ "
 fi
 
 alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
