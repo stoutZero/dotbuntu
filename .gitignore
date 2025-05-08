@@ -2,6 +2,8 @@
 
 # Blacklist everything
 *
+.gitconfig
+.zshrc
 /.files/extra.sh
 
 # Whitelist individual items

@@ -13,7 +13,7 @@ alias a='php artisan'
 alias badge="tput bel"
 
 if [ "x$(command -v eza)" != 'x' ]; then
-  local _l='eza --follow-symlinks --long --classify --group --all --header --links '
+  local _l='eza --follow-symlinks --long --classify --group --all --header --links'
   alias  e='eza '
   alias  l="${_l}"
   alias la="${_l} --all "
