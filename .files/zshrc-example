@@ -46,10 +46,22 @@ fi
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
+  aliases
   colored-man-pages
   colorize
+  command-not-found
+  common-aliases
+  copyfile
+  copypath
+  cp
   encode64
+  extract
+  fancy-ctrl-z
+  gh
   git
+  nvm
+  safe-paste
+  screen
 )
 
 if [ -d $HOME/.zshd/custom/plugins/nice-exit-code ]; then
@@ -82,21 +94,29 @@ if command -v docker &>/dev/null; then
   plugins+=(docker)
 fi
 
-if docker compose &>/dev/null; then
-  plugins+=(docker-compose)
-fi
-
 if command -v composer &>/dev/null; then
   plugins+=(composer)
 fi
 
 if command -v npm &>/dev/null; then
   plugins+=(npm)
+fi
 
-  # nvm is a function, which is why `which` is used here
-  if which nvm &>/dev/null; then
-    plugins+=(nvm)
-  fi
+# it's highly discouraged to run both firewalld & ufw in the same system
+if [ command -v firewall-cmd &>/dev/null ] && [ ! command -v ufw &>/dev/null ]; then
+  plugins+=(firewalld)
+fi
+
+if [ command -v ufw &>/dev/null ] && [ ! command -v firewall-cmd &>/dev/null ]; then
+  plugins+=(ufw)
+fi
+
+if [ command -v systemctl &>/dev/null ]; then
+  plugins+=(systemd)
+fi
+
+if docker compose &>/dev/null; then
+  plugins+=(docker-compose)
 fi
 
 [[ -s $ZSH/oh-my-zsh.sh ]] && . $ZSH/oh-my-zsh.sh # Load oh-my-zsh, if exists

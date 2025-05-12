@@ -2,3 +2,5 @@
   path = ~/.gitaliases
 [safe]
   directory = /dotbuntu/.git
+[pull]
+  rebase = true
