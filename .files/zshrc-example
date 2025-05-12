@@ -22,6 +22,26 @@ export CHEATCOLORS=true
 # Uncomment following line if you want red dots to be displayed while waiting for completion
 COMPLETION_WAITING_DOTS="true"
 
+if [ "$(\ls -1 $HOME/.zcompdump* | wc -l | tr -d ' ')" -gt 1 ]; then
+  rm -f $HOME/.zcompdump*
+fi
+
+compinit
+
+if command -v uv &>/dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+
+# Load RVM into a shell session *as a function*
+[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
+
+[[ -s ~/.nvm/nvm.sh ]] && source ~/.nvm/nvm.sh \
+  && (nvm use default > /dev/null 2>&1) # Load NVM, if exists
+
+# This loads nvm bash_completion
+[[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
+
 # Which plugins would you like to load? (plugins can be found in $ZSH/plugins/*)
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
@@ -30,21 +50,56 @@ plugins=(
   colorize
   encode64
   git
-  nvm
-  npm
-  nice-exit-code
 )
 
+if [ -d $HOME/.zshd/custom/plugins/nice-exit-code ]; then
+  plugins+=(nice-exit-code)
+fi
+
+if command -v fzf &>/dev/null; then
+  if [ -d $HOME/.zshd/plugins/fzf ]; then
+    plugins+=(fzf)
+  fi
+
+  if [ -d $HOME/.zshd/custom/plugins/fzf-tab ]; then
+    plugins+=(fzf-tab)
+  fi
+
+  ## these two fzf stuff must be loaded after compinit, but before plugins
+  # completions
+  [[ -f $HOME/.fzf.zsh ]] && source $HOME/.fzf.zsh
+
+  # bash and zsh key bindings for Git objects
+  [[ -s $HOME/.fzf-git.sh/fzf-git.sh ]] && source $HOME/.fzf-git.sh/fzf-git.sh
+fi
+
+if command -v eza &>/dev/null \
+  && [ -d $HOME/.zshd/custom/plugins/eza ]; then
+  plugins+=(eza)
+fi
+
+if command -v docker &>/dev/null; then
+  plugins+=(docker)
+fi
+
+if docker compose &>/dev/null; then
+  plugins+=(docker-compose)
+fi
+
+if command -v composer &>/dev/null; then
+  plugins+=(composer)
+fi
+
+if command -v npm &>/dev/null; then
+  plugins+=(npm)
+
+  # nvm is a function, which is why `which` is used here
+  if which nvm &>/dev/null; then
+    plugins+=(nvm)
+  fi
+fi
+
 [[ -s $ZSH/oh-my-zsh.sh ]] && . $ZSH/oh-my-zsh.sh # Load oh-my-zsh, if exists
-
-# Load RVM into a shell session *as a function*
-[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm
-
-[[ -s ~/.nvm/nvm.sh ]] && . ~/.nvm/nvm.sh \
-  && (nvm use default > /dev/null 2>&1) # Load NVM, if exists
-
-# This loads nvm bash_completion
-[[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
 
 # pnpm
 export PNPM_HOME=~/.local/share/pnpm

@@ -35,6 +35,17 @@ else
   echo 'nice-exit-code already installed'
 fi
 
+if [ ! -d ~/.zshd/custom/plugins/fzf-tab ]; then
+  echo 'cloning fzf-tab'
+  echo
+  git clone https://github.com/Aloxaf/fzf-tab \
+    ~/.zshd/custom/plugins/fzf-tab
+  echo
+  echo 'fzf-tab cloned'
+else
+  echo 'fzf-tab already installed'
+fi
+
 
 if [[ "$(basename "$SHELL")" != "zsh" ]]; then
   echo 'changing default shell to zshd'
