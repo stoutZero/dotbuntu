@@ -12,41 +12,21 @@ alias a='php artisan'
 # (useful when executing time-consuming commands)
 alias badge="tput bel"
 
-if [ "x$(command -v eza)" != 'x' ]; then
-  local _l='eza --follow-symlinks --long --classify --group --all --header --links'
-  alias  e='eza '
-  alias  l="${_l}"
-  alias la="${_l} --all "
-  alias lx="${_l} --extended "
-else
-  # -l: long
-  # -@: extended when long
-  # -B: print of non-printable characters as \xxx
-  # -F: classify each line
-  # -a: print . and ..
-  # -s: print block size
-  # -h: humane base-2 file sizes
-  # -H: follow-symlinks
-  local _l='echo COLS: MODE,LINKS,USER,GROUP,SIZE,MTIME,NAME ; \ls -lBFhH'
-  alias  l="${_l}"
-  alias la="${_l} -a "
-  alias lx="${_l} -@ "
-fi
-
-alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
-
 alias c='composer '
 alias clone='git clone '
 
-alias d='docker '
-alias dc='docker compose '
-alias dcx='docker compose exec '
+if ! command -v docker > /dev/null 2>&1 ; then
+  alias d='docker '
+  alias dc='docker compose '
+  alias dcx='docker compose exec '
+fi
 
 alias dfh='df -h '
 alias duh='du -h '
 
 alias edit='$EDITOR'
 
+alias  e=\$EDITOR' '
 alias empty='truncate -s0 '
 
 if ! command -v frankenphp > /dev/null 2>&1 ; then
@@ -76,6 +56,26 @@ alias j="jobs"
 
 alias k9='kill -9 '
 
+if [ "x$(command -v eza)" != 'x' ]; then
+  local _l='eza --follow-symlinks --long --classify --group --all --header --links'
+  alias  l="${_l}"
+  alias la="${_l} --all "
+  alias lx="${_l} --extended "
+else
+  # -l: long
+  # -@: extended when long
+  # -B: print of non-printable characters as \xxx
+  # -F: classify each line
+  # -a: print . and ..
+  # -s: print block size
+  # -h: humane base-2 file sizes
+  # -H: follow-symlinks
+  local _l='echo COLS: MODE,LINKS,USER,GROUP,SIZE,MTIME,NAME ; \ls -lBFhH'
+  alias  l="${_l}"
+  alias la="${_l} -a "
+  alias lx="${_l} -@ "
+fi
+
 alias lns='ln -s'
 
 alias mkdir='mkdir -p '
@@ -96,10 +96,25 @@ alias pgf='pgrep -f '
 alias po='popd '
 alias psx='ps aux '
 
+alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
+
 # Reload the shell (i.e. invoke as a login shell)
 alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
+
+if [ command -v systemctl ]; then
+  alias s='sudo systemctl '
+  alias s_en='sudo systemctl enable '
+  alias s_di='sudo systemctl disable '
+  alias sdreload='sudo systemctl daemon-reload;'
+  alias start='sudo systemctl start '
+  alias status='sudo systemctl status '
+  alias stop='sudo systemctl stop '
+  alias reload='sudo systemctl reload '
+  alias restart='sudo systemctl restart '
+  alias list_svc='sudo systemctl list-units --type=service --all | cat;'
+fi
 
 alias scl='screen -ls '
 alias scr='screen -r '
