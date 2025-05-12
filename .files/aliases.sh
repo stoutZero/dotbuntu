@@ -15,7 +15,7 @@ alias badge="tput bel"
 alias c='composer '
 alias clone='git clone '
 
-if ! command -v docker > /dev/null 2>&1 ; then
+if command -v docker > /dev/null 2>&1 ; then
   alias d='docker '
   alias dc='docker compose '
   alias dcx='docker compose exec '
@@ -29,7 +29,7 @@ alias edit='$EDITOR'
 alias  e=\$EDITOR' '
 alias empty='truncate -s0 '
 
-if ! command -v frankenphp > /dev/null 2>&1 ; then
+if command -v frankenphp > /dev/null 2>&1 ; then
 	alias fart='frankenphp php-cli ./artisan'
 fi
 
@@ -56,7 +56,7 @@ alias j="jobs"
 
 alias k9='kill -9 '
 
-if [ "x$(command -v eza)" != 'x' ]; then
+if command -v eza > /dev/null 2>&1 ; then
   local _l='eza --follow-symlinks --long --classify --group --all --header --links'
   alias  l="${_l}"
   alias la="${_l} --all "
@@ -103,7 +103,7 @@ alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
 
-if [ command -v systemctl ]; then
+if command -v systemctl > /dev/null 2>&1 ; then
   alias s='sudo systemctl '
   alias s_en='sudo systemctl enable '
   alias s_di='sudo systemctl disable '
