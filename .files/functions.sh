@@ -416,5 +416,17 @@ notify_discord () {
 
 sshk () { ssh-keygen -t ed25519 -C "${1}" -f "${1}" ; }
 
+s () { sudo systemctl "$@" }
+s_en () { sudo systemctl "enable" "$@" }
+s_di () { sudo systemctl "disable" "$@" }
+is_en () { sudo systemctl "enable" "$@" }
+sdreload () { sudo systemctl daemon-reload; }
+start () { sudo systemctl "start" "$@" }
+status () { sudo systemctl "status" "$@" }
+stop () { sudo systemctl "stop" "$@" }
+reload () { sudo systemctl "reload" "$@" }
+restart () { sudo systemctl "restart" "$@" }
+list_svc () { sudo systemctl list-units --type=service --all | cat; }
+
 compctl -K _completemarks jump
 compctl -K _completemarks unmark

@@ -103,19 +103,6 @@ alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
 
-if command -v systemctl > /dev/null 2>&1 ; then
-  alias s='sudo systemctl '
-  alias s_en='sudo systemctl enable '
-  alias s_di='sudo systemctl disable '
-  alias sdreload='sudo systemctl daemon-reload;'
-  alias start='sudo systemctl start '
-  alias status='sudo systemctl status '
-  alias stop='sudo systemctl stop '
-  alias reload='sudo systemctl reload '
-  alias restart='sudo systemctl restart '
-  alias list_svc='sudo systemctl list-units --type=service --all | cat;'
-fi
-
 alias scl='screen -ls '
 alias scr='screen -r '
 
