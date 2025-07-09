@@ -46,11 +46,7 @@ then
 fi
 
 if ! command -v docker > /dev/null 2>&1 ; then
-  pkgs="docker-ce \
-    docker-ce-cli \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-compose-plugin"
+  pkgs="docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin"
 fi
 
 _info 'installing: docker-ce & co'
