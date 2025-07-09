@@ -1,82 +1,79 @@
-setup_users () {
-  if [ "" = "$1" ]; then
-    echo "Please supply a hostname, or just use the old one"
-    exit 1
-  fi
-
+if [ ! -d /dotbuntu ]; then
   sudo git clone https://github.com/stoutZero/dotbuntu /dotbuntu
+else 
+  sudo git -C /dotbuntu pull
+fi
 
-  if [ ! -d /home/pl ]; then
-    sudo adduser --gecos "" --shell $(which zsh) pl
-    sudo usermod -aG sudo pl
-    [ -d ~/.ssh ] && sudo cp -an ~/.ssh ~pl/
-    sudo mkdir ~pl/tmp
-    sudo chown -R pl: ~pl
-  fi
+if [ ! -d /home/pilus ]; then
+  sudo adduser --gecos "" --shell $(which zsh) pilus
+  sudo usermod -aG sudo pilus
+  [ -d ~/.ssh ] && sudo cp -an ~/.ssh ~pilus/
+  sudo mkdir ~pilus/tmp
+  sudo chown -R pilus: ~pilus
+fi
 
-  if [ -f /home/pl/.git/config ]; then
-    sudo su pl -c 'git -C ~/ remote set-url origin /dotbuntu'
-  else
-    sudo su pl -c 'git config --global --add safe.directory /dotbuntu/.git'
-    sudo su pl -c 'git clone /dotbuntu ~/dotbuntu'
-    sudo su pl -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
-    sudo su pl -c 'rm -rf ~/dotbuntu'
-  fi
+if [ -f /home/pilus/.git/config ]; then
+  sudo su pilus -c 'git -C ~/ remote set-url origin /dotbuntu'
+else
+  sudo su pilus -c 'git config --global --add safe.directory /dotbuntu/.git'
+  sudo su pilus -c 'git clone /dotbuntu ~/dotbuntu'
+  sudo su pilus -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
+  sudo su pilus -c 'rm -rf ~/dotbuntu'
+fi
 
-  if [ ! -f /etc/sudoers.d/pl ]; then
-    echo 'pl ALL=(ALL) NOPASSWD:ALL' \
-      | sudo tee /etc/sudoers.d/pl > /dev/null
+if [ ! -f /etc/sudoers.d/pilus ]; then
+  echo 'pilus ALL=(ALL) NOPASSWD:ALL' \
+    | sudo tee /etc/sudoers.d/pilus > /dev/null
 
-    sudo visudo -f /etc/sudoers.d/pl
+  sudo visudo -f /etc/sudoers.d/pilus
 
-    [ $? -eq 1 ] && sudo rm -f /etc/sudoers.d/pl
-  fi
+  [ $? -eq 1 ] && sudo rm -f /etc/sudoers.d/pilus
+fi
 
-  if [ ! -d /home/deployer ]; then
-    sudo adduser --gecos "" --shell $(which zsh) deployer
-    [ -d ~/.ssh ] && sudo cp -an ~/.ssh ~deployer/
-    sudo mkdir ~deployer/tmp
-    sudo chown -R deployer: ~deployer
-  fi
+if [ ! -d /home/ops ]; then
+  sudo adduser --gecos "" --shell $(which zsh) ops
+  [ -d ~/.ssh ] && sudo cp -an ~/.ssh ~ops/
+  sudo mkdir ~ops/tmp
+  sudo chown -R ops: ~ops
+fi
 
-  if [ -f /home/deployer/.git/config ]; then
-    sudo su deployer -c 'git -C ~/ remote set-url origin /dotbuntu'
-  else
-    sudo su deployer -c 'git config --global --add safe.directory /dotbuntu/.git'
-    sudo su deployer -c 'git clone /dotbuntu ~/dotbuntu'
-    sudo su deployer -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
-    sudo su deployer -c 'rm -rf ~/dotbuntu'
-  fi
+if [ -f /home/ops/.git/config ]; then
+  sudo su ops -c 'git -C ~/ remote set-url origin /dotbuntu'
+else
+  sudo su ops -c 'git config --global --add safe.directory /dotbuntu/.git'
+  sudo su ops -c 'git clone /dotbuntu ~/dotbuntu'
+  sudo su ops -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
+  sudo su ops -c 'rm -rf ~/dotbuntu'
+fi
 
-  sudo chsh -s $(which zsh) root
-  sudo cp -an ~/.{f,g,z}* /root/
-  [ -d ~/.ssh ] && sudo cp -an ~/.ssh /root/
-  sudo mkdir /root/tmp
-  sudo chown -R root: /root/
+sudo chsh -s $(which zsh) root
+sudo cp -an ~/.{f,g,z}* /root/
+[ -d ~/.ssh ] && sudo cp -an ~/.ssh /root/
+sudo mkdir /root/tmp
+sudo chown -R root: /root/
 
-  if [ -f /root/.git/config ]; then
-    sudo su root -c 'git -C ~/ remote set-url origin /dotbuntu'
-  else
-    sudo su root -c 'git config --global --add safe.directory /dotbuntu/.git'
-    sudo su root -c 'git clone /dotbuntu ~/dotbuntu'
-    sudo su root -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
-    sudo su root -c 'rm -rf ~/dotbuntu'
-  fi
+if [ -f /root/.git/config ]; then
+  sudo su root -c 'git -C ~/ remote set-url origin /dotbuntu'
+else
+  sudo su root -c 'git config --global --add safe.directory /dotbuntu/.git'
+  sudo su root -c 'git clone /dotbuntu ~/dotbuntu'
+  sudo su root -c 'mv ~/dotbuntu/.{f,g,z}* ~/'
+  sudo su root -c 'rm -rf ~/dotbuntu'
+fi
 
-  echo 'printing git remote for ~root'
-  sudo su root 'git -C ~ remote get-url origin'
-  echo
-  echo
+echo 'printing git remote for ~root'
+sudo su root 'git -C ~ remote get-url origin'
+echo
+echo
 
-  echo 'printing git remote for ~deployer'
-  sudo su deployer 'git -C ~ remote get-url origin'
-  echo
-  echo
+echo 'printing git remote for ~ops'
+sudo su ops 'git -C ~ remote get-url origin'
+echo
+echo
 
-  echo 'printing git remote for ~pl'
-  sudo su pl 'git -C ~ remote get-url origin'
-  echo
-  echo
+echo 'printing git remote for ~pl'
+sudo su pl 'git -C ~ remote get-url origin'
+echo
+echo
 
-  echo "Done, try: ssh as pl. Current user: $(whoami)"
-}
+echo "Done, try: ssh as pl. Current user: $(whoami)"

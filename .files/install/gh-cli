@@ -14,18 +14,28 @@ fi
 
 _info 'installing: gh-cli from github as root'
 
-repo="https://github.com/cli/cli"
+# repo="https://github.com/cli/cli"
 
-arc="$(get_arch)"
-platform="$(get_platform)"
-version="$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/cli/cli | tail --lines=1 | awk -F' ' '{print $2}' | awk -F'/' '{print $3}' | tr -d 'v')"
+# arc="$(get_arch)"
+# platform="$(get_platform)"
+# version="$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/cli/cli | tail --lines=1 | awk -F' ' '{print $2}' | awk -F'/' '{print $3}' | tr -d 'v')"
 
-filename="gh_${version}_${platform}_${arc}.deb"
+# filename="gh_${version}_${platform}_${arc}.deb"
 
-url="${repo}/releases/download/v${version}/$filename"
+# url="${repo}/releases/download/v${version}/$filename"
 
-wget -qO $filename $url 2>&1
+# wget -qO $filename $url 2>&1
 
-sudo dpkg -i "$filename"
+# sudo dpkg -i "$filename"
+
+(type -p wget >/dev/null || (sudo apt update && sudo apt install wget -y)) \
+  && sudo mkdir -p -m 755 /etc/apt/keyrings \
+  && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+  && cat $out | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+  && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+  && sudo mkdir -p -m 755 /etc/apt/sources.list.d \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && sudo apt update \
+  && sudo apt install gh -y
 
 _info 'installed: gh-cli from github as root'

@@ -1,59 +1,62 @@
 #!/usr/bin/env zsh
 
+echo "!!DISABLED!!"
+exit 1
+
 # shellcheck disable=SC1090
-source ~/.files/_install_funcs.sh
+# source ~/.files/_install_funcs.sh
 
-if ! id -u deployer > /dev/null 2>&1; then
-  _info 'creating user: deployer'
+# if ! id -u deployer > /dev/null 2>&1; then
+#   _info 'creating user: deployer'
 
-  sudo groupadd -g 10000 deployer
+#   sudo groupadd -g 10000 deployer
 
-  sudo useradd \
-    -g deployer --no-user-group \
-    --home-dir /home/deployer \
-    --shell "$(which zsh)" \
-    --system --uid 10000 deployer
+#   sudo useradd \
+#     -g deployer --no-user-group \
+#     --home-dir /home/deployer \
+#     --shell "$(which zsh)" \
+#     --system --uid 10000 deployer
 
-  _info 'created => user: deployer'
-fi
+#   _info 'created => user: deployer'
+# fi
 
-if [ ! -d /home/deployer/apps ]; then
-  _info 'creating apps dir in ~deployer'
-  sudo mkdir -p /home/deployer/apps
-  _info 'created: /home/deployer/apps'
-fi
+# if [ ! -d /home/deployer/apps ]; then
+#   _info 'creating apps dir in ~deployer'
+#   sudo mkdir -p /home/deployer/apps
+#   _info 'created: /home/deployer/apps'
+# fi
 
-if [ ! -f /home/deployer/.zshd/README.md ]; then
-  _info 'copying .zshd to ~deployer'
-  sudo cp -an ~/.{files,git,zsh}* /home/deployer/
-  _info 'copied: .zshd'
-fi
+# if [ ! -f /home/deployer/.zshd/README.md ]; then
+#   _info 'copying .zshd to ~deployer'
+#   sudo cp -an ~/.{files,git,zsh}* /home/deployer/
+#   _info 'copied: .zshd'
+# fi
 
-sudo chown -Rh deployer: /home/deployer
+# sudo chown -Rh deployer: /home/deployer
 
-if [ ! -f /home/deployer/.nvm/README.md ]; then
-  _info 'installing nvm as deployer'
-  sudo su deployer  -l \
-    -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash' \
-    2>/dev/null
-  _info 'installed: nvm (as deployer)'
-fi
+# if [ ! -f /home/deployer/.nvm/README.md ]; then
+#   _info 'installing nvm as deployer'
+#   sudo su deployer  -l \
+#     -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash' \
+#     2>/dev/null
+#   _info 'installed: nvm (as deployer)'
+# fi
 
-if [ ! -d /home/deployer/.nvm/versions/node ]; then
-  _info 'installing latest lts nodejs as deployer'
+# if [ ! -d /home/deployer/.nvm/versions/node ]; then
+#   _info 'installing latest lts nodejs as deployer'
 
-  sudo su deployer -l -c 'source ~/.zshrc ; nvm install --lts \\
-  && echo "node version $(node -v)"'
+#   sudo su deployer -l -c 'source ~/.zshrc ; nvm install --lts \\
+#   && echo "node version $(node -v)"'
 
-  _info 'installed: latest lts nodejs (as deployer)'
-fi
+#   _info 'installed: latest lts nodejs (as deployer)'
+# fi
 
-if ! ls -1 /home/deployer/.nvm/versions/node/*/bin/ni > /dev/null 2>&1; then
-  _info 'installing npm package: @antfu/ni as deployer'
-  sudo su deployer -l -c 'source ~/.zshrc ; npm install -g @antfu/ni'
-fi
+# if ! ls -1 /home/deployer/.nvm/versions/node/*/bin/ni > /dev/null 2>&1; then
+#   _info 'installing npm package: @antfu/ni as deployer'
+#   sudo su deployer -l -c 'source ~/.zshrc ; npm install -g @antfu/ni'
+# fi
 
-if [ ! -f /home/deployer/.local/share/pnpm/pnpm ]; then
-  _info 'installing pnpm as deployer'
-  sudo su deployer -l -c 'curl -fsSL https://get.pnpm.io/install.sh | sh -'
-fi
+# if [ ! -f /home/deployer/.local/share/pnpm/pnpm ]; then
+#   _info 'installing pnpm as deployer'
+#   sudo su deployer -l -c 'curl -fsSL https://get.pnpm.io/install.sh | sh -'
+# fi

@@ -75,3 +75,9 @@ line_in_file () {
 
   echo $(grep "$line" "$file" 2>/dev/null | wc -l)
 }
+
+gh_latest () {
+  [ -z "${1}" ] && exit 1
+
+  curl -s "https://api.github.com/repos/${1}/releases/latest" | jq -r '.tag_name'
+}
