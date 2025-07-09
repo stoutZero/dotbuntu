@@ -16,9 +16,9 @@ wget -q "https://repo.percona.com/apt/$deb"
 
 sudo dpkg -i $deb
 
-sudo apt update
+sudo apt-get update
 sudo percona-release setup ppg-16
-sudo apt -y install percona-ppg-server-16
+sudo apt-get install -y percona-ppg-server-16
 sudo systemctl status postgresql.service
 
 _info "installed: percona's postgresql"

@@ -17,7 +17,7 @@ fi
 
 _info 'installing php & redis via apt'
 
-sudo apt install -y php8.3-fpm \
+sudo apt-get install -y php8.3-fpm \
   php8.3-cli \
   php8.3-bcmath \
   php8.3-common \

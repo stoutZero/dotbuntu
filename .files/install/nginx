@@ -17,6 +17,6 @@ fi
 
 _info 'installing nginx via apt'
 
-sudo apt install -y nginx-full
+sudo apt-get install -y nginx-full
 
 _info 'nginx installed via apt'

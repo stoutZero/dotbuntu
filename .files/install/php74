@@ -17,7 +17,7 @@ fi
 
 _info 'installing php & redis via apt'
 
-sudo apt install -y php7.4-fpm \
+sudo apt-get install -y php7.4-fpm \
   php7.4-cli \
   php7.4-bcmath \
   php7.4-common \

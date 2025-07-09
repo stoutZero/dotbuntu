@@ -33,7 +33,7 @@ zip \
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
 
-_apt="sudo apt install -y ${pkgs}"
+_apt="sudo apt-get install -y ${pkgs}"
 
 echo "$_apt"
 eval "$_apt"
@@ -56,7 +56,7 @@ zstd \
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
 
-_apt="sudo apt install -y ${pkgs}"
+_apt="sudo apt-get install -y ${pkgs}"
 
 echo "$_apt"
 eval "$_apt"

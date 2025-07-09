@@ -10,7 +10,7 @@ if (( $(check_ppa 'longsleep/golang-backports') < 1))
 then
   _info "adding ppa:longsleep/golang-backports"
 
-  sudo apt install -y curl ca-certificates
+  sudo apt-get install -y curl ca-certificates
 
   sudo add-apt-repository -y ppa:longsleep/golang-backports
 
@@ -18,7 +18,7 @@ then
 fi
 
 if ! command -v go > /dev/null 2>&1; then
-  sudo apt install -y golang-go
+  sudo apt-get install -y golang-go
 fi
 
 _info 'golang installed, version info right below'

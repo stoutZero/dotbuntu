@@ -10,7 +10,7 @@ arch="$(get_arch)"
 
 _info 'installing: required packages'
 
-sudo apt install -y software-properties-common \
+sudo apt-get install -y software-properties-common \
   apt-transport-https \
   ca-certificates \
   curl \
@@ -39,7 +39,7 @@ then
       $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    sudo apt update
+    sudo apt-get update
   fi
 
   _info 'installed: docker apt key & source'
@@ -56,9 +56,9 @@ fi
 _info 'installing: docker-ce & co'
 
 if [ "" != "$pkgs" ]; then
-  sudo apt update
+  sudo apt-get update
 
-  sudo apt install -y "$pkgs"
+  sudo apt-get install -y "$pkgs"
 fi
 
 _info 'installed: docker-ce & co'
@@ -75,7 +75,7 @@ if command -v docker > /dev/null 2>&1; then
     curl -OL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
     _info 'installing: dive'
 
-    sudo apt install "./dive_${DIVE_VERSION}_linux_amd64.deb" > /dev/null 2>&1
+    sudo apt-get install "./dive_${DIVE_VERSION}_linux_amd64.deb" > /dev/null 2>&1
 
     sudo rm -f "./dive_${DIVE_VERSION}_linux_amd64.deb" > /dev/null 2>&1
 
