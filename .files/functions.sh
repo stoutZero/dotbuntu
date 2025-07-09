@@ -416,11 +416,10 @@ notify_discord () {
 
 sshk () { ssh-keygen -t ed25519 -C "${1}" -f "${1}" ; }
 
-s () { sudo systemctl "$@" }
-s_en () { sudo systemctl "enable" "$@" }
-s_di () { sudo systemctl "disable" "$@" }
+sen () { sudo systemctl "enable" "$@" }
+sdi () { sudo systemctl "disable" "$@" }
 is_en () { sudo systemctl "enable" "$@" }
-sdreload () { sudo systemctl daemon-reload; }
+sdrel () { sudo systemctl daemon-reload; }
 start () { sudo systemctl "start" "$@" }
 status () { sudo systemctl "status" "$@" }
 stop () { sudo systemctl "stop" "$@" }

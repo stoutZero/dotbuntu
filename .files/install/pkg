@@ -46,23 +46,32 @@ fi
 
 # zsh ~/.files/install/gh-cli
 
-pkgs="fail2ban \
+pkgs="fail2ban firewalld \
 git \
 jq \
-redis-server \
 unhide \
-zstd \
-"
+zstd"
 
 pkgs="$(echo "$pkgs" | tr -d '\n')"
 
 _apt="sudo apt-get install -y ${pkgs}"
 
+if command -v ufw; then
+  echo -n "Removing ufw ... "
+  apt-get remove -y ufw &>/dev/null
+
+  if [ ! $? -eq 0 ]; then
+    echo failed!
+  else
+    echo done
+  fi
+fi
+
 echo "$_apt"
 eval "$_apt"
 
 if ! command -v broot; then
-  _info 'installing: broot'
+  _info 'Installing: broot'
 
   curl --silent -OL \
     https://dystroy.org/broot/download/x86_64-linux/broot
@@ -90,7 +99,6 @@ if ! command -v micro ; then
 
   _info 'installed: micro'
 fi
-
 
 if ! command -v fzf ; then
   _info 'installing: fzf'
@@ -131,32 +139,28 @@ if ! command -v bat ; then
   _info 'installed: bat'
 fi
 
-if [ ! -f "$bindir/sysz" ]; then
-  wget -qO "$bindir/sysz" \
-    https://github.com/joehillen/sysz/releases/latest/download/sysz
+# sysz is slow & unmaintained, replace it with systemctl-tui
+if ! command -v systemctl-tui; then
+  curl https://raw.githubusercontent.com/rgwood/systemctl-tui/master/install.sh | bash
 
-  sudo chmod a+x "$bindir/sysz"
-
-  _info "sysz installed to: "$(command -v sysz)""
-
-  _info "installed: https://github.com/joehillen/sysz"
+  _info "installed: https://github.com/rgwood/systemctl-tui"
 fi
 
-if [ ! -f "$bindir/yq" ]; then
-  _info 'installing: yq'
+# if [ ! -f "$bindir/yq" ]; then
+#   _info 'installing: yq'
 
-  repo=https://github.com/mikefarah/yq
+#   repo=https://github.com/mikefarah/yq
 
-  v="$(gh_latest "$repo")"
+#   v="$(gh_latest "$repo")"
 
-  sudo wget -qO "$bindir/yq" \
-    "$repo/releases/download/v${v}/yq_linux_amd64"
+#   sudo wget -qO "$bindir/yq" \
+#     "$repo/releases/download/v${v}/yq_linux_amd64"
 
-  sudo chmod a+x "$bindir/yq"
+#   sudo chmod a+x "$bindir/yq"
 
-  _info "yq installed to: "$(command -v yq)""
+#   _info "yq installed to: "$(command -v yq)""
 
-  _info 'installed: yq'
-fi
+#   _info 'installed: yq'
+# fi
 
 _info 'essential packages installed'
