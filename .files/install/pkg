@@ -141,14 +141,16 @@ fi
 
 # we need `uv` (a version manager for python), to install isd
 if ! command -v uv ; then
+  export UV_INSTALL_DIR=/usr/local/bin
   curl -LsSf https://astral.sh/uv/install.sh | sh
+  export UV_INSTALL_DIR=
 fi
 
 # sysz is slow & unmaintained, replace it with systemctl-tui
 if ! command -v isd; then
-  uv tool install isd-tui
+  UV_TOOL_BIN_DIR=/usr/local/bin uv tool install isd-tui
 
-  _info "installed: https://github.com/rgwood/systemctl-tui"
+  _info "installed: https://isd-project.github.io/isd/"
 fi
 
 # if [ ! -f "$bindir/yq" ]; then

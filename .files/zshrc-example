@@ -138,4 +138,12 @@ do
 done;
 unset file
 
-export -U PATH=$HOME/bin:$PATH
+[ -s $HOME/.local/bin/env ] && source $HOME/.local/bin/env
+
+if [ -s $HOME/.local/bin ]; then
+  export -U PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -s $HOME/.local/bin ]; then
+  export -U PATH="$HOME/.local/bin:$PATH"
+fi
