@@ -139,9 +139,14 @@ if ! command -v bat ; then
   _info 'installed: bat'
 fi
 
+# we need `uv` (a version manager for python), to install isd
+if ! command -v uv ; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
 # sysz is slow & unmaintained, replace it with systemctl-tui
-if ! command -v systemctl-tui; then
-  curl https://raw.githubusercontent.com/rgwood/systemctl-tui/master/install.sh | bash
+if ! command -v isd; then
+  uv tool install isd-tui
 
   _info "installed: https://github.com/rgwood/systemctl-tui"
 fi

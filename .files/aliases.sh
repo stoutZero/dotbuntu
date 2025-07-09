@@ -134,7 +134,3 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 	# shellcheck disable=SC2139,SC2140
 	alias "$method"="lwp-request -m '$method'"
 done
-
-if command -v systemctl-tui; then
-  alias s="systemctl-tui "
-fi
