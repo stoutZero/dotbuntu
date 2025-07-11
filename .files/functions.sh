@@ -418,7 +418,7 @@ sshk () { ssh-keygen -t ed25519 -C "${1}" -f "${1}" ; }
 
 sen () { sudo systemctl "enable" "$@" }
 sdi () { sudo systemctl "disable" "$@" }
-is_en () { sudo systemctl "enable" "$@" }
+is_en () { sudo systemctl "is-enabled" "$@" }
 sdrel () { sudo systemctl daemon-reload; }
 start () { sudo systemctl "start" "$@" }
 status () { sudo systemctl "status" "$@" }

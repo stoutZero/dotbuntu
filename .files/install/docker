@@ -8,13 +8,7 @@ source ~/.files/_install_funcs.sh
 
 arch="$(get_arch)"
 
-_info 'installing: required packages'
-
-sudo apt-get install -y software-properties-common \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  gnupg
+_run "sudo apt-get install -y software-properties-common apt-transport-https ca-certificates curl gnupg" 'Installing: required packages for docker'
 
 install_keyring
 
@@ -24,8 +18,7 @@ _info 'installing: docker apt key & source'
 
 pkgs=''
 
-if (( $(check_ppa 'download.docker.com') < 1))
-then
+if (( $(check_ppa 'download.docker.com') < 1)); then
   if [ ! -f /etc/apt/keyrings/docker.asc ]; then
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
       -o /etc/apt/keyrings/docker.asc
@@ -60,31 +53,27 @@ fi
 _info 'installed: docker-ce & co'
 
 if command -v docker > /dev/null 2>&1; then
-  DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
+  v=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
     | grep '"tag_name":' \
     | sed -E 's/.*"v([^"]+)".*/\1/')
 
 
   if ! command -v dive > /dev/null 2>&1 || \
-    [[ "$DIVE_VERSION" != $(dive version | awk -F' ' '{print $2}') ]]
+    [[ "$v" != $(dive version | awk -F' ' '{print $2}') ]]
   then
-    curl -OL "https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb"
-    _info 'installing: dive'
+    _run "eget wagoodman/dive --asset _linux_${arch}.deb" 'Downloading wagoodman/dive'
+    _run "dpkg -i dive_${v}_linux_${arch}.deb" 'Installing: wagoodman/dive'
 
-    sudo apt-get install "./dive_${DIVE_VERSION}_linux_amd64.deb" > /dev/null 2>&1
-
-    sudo rm -f "./dive_${DIVE_VERSION}_linux_amd64.deb" > /dev/null 2>&1
+    sudo rm -f "./dive_${v}_linux_amd64.deb" &>/dev/null
 
     _info "dive is installed to: "$(command -v dive)""
-
-    _info 'installed: dive'
   fi
 
   if ! command -v ctop > /dev/null 2>&1; then
-  _info 'installing: ctop'
-
     repo=https://github.com/bcicen/ctop
     v="$(gh_latest "$repo" | tr -d v)"
+
+    _run  "eget bcicen/ctop --asset ctop-${v}-linux-${arch}.deb" "Installing: ctop"
 
     sudo wget \
       "$repo/releases/download/v${v}/ctop-${v}-linux-amd64" \

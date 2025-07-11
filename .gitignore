@@ -4,6 +4,7 @@
 *
 .gitconfig
 .zshrc
+/.files/.DS_Store
 /.files/extra.sh
 
 # Whitelist individual items

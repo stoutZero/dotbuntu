@@ -1,0 +1,116 @@
+#!/usr/bin/env zsh
+
+# shellcheck disable=SC1090
+source ~/.files/functions.sh
+
+# shellcheck disable=SC1090
+source ~/.files/_install_funcs.sh
+
+_info 'installing essential packages'
+
+release="$(get_release)"
+release_name="$(get_release_name)"
+
+arch="$(get_arch)"
+
+bindir=/usr/local/bin
+
+curl -sSL https://github.com/azlux/gnos-sockets/raw/refs/heads/master/sss > "${bindir}/sss"
+chmod a+x "${bindir}/sss"
+
+cd /tmp/ || exit
+
+if [ ! -f "/etc/apt/sources.list.d/git-core-ubuntu-ppa-${release_name}.list" ]; then
+  _printf 'adding: ppa:git-core/ppa ... '
+  sudo add-apt-repository -y ppa:git-core/ppa
+  echo done
+fi
+
+if [ ! -f /etc/apt/sources.list.d/gierens.list ]; then
+  sudo mkdir -p /etc/apt/keyrings
+  wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+  sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+fi
+
+pkgs="software-properties-common \
+btop \
+bzip2 \
+curl \
+dnsutils \
+eza \
+fail2ban \
+firewalld \
+fzf \
+git \
+gzip \
+htop \
+jq \
+nano \
+traceroute \
+tree \
+unhide \
+wget \
+whois \
+zip \
+zstd"
+
+pkgs="$(echo "$pkgs" | tr -d '\n')"
+
+_run "sudo apt-get install -y ${pkgs}" "Installing: ${pkgs} ..."
+
+if ! command -v broot; then
+  _run "sudo apt-get install -y ${pkgs}" "Installing: ${pkgs} ..."
+
+  _run "curl --silent -OL https://dystroy.org/broot/download/x86_64-linux/broot" \
+    'Installing: broot (download)'
+
+  [ -f broot ] && sudo mv broot /usr/local/bin && sudo chmod a+x /usr/local/bin/broot
+
+  # shellcheck disable=SC2016
+  echo "\n# generated from: \`broot --print-shell-function zsh\`" \
+    >> ~/.files/extra.sh
+  broot --print-shell-function zsh >> ~/.files/extra.sh
+
+  if [ $? -eq 0 ]; then
+    _success 'DONE'
+  else
+    _error 'FAILED'
+  fi
+fi
+
+if ! command -v micro ; then
+  _run "curl -sSL https://getmic.ro | bash" \
+    'Installing: micro'
+
+  _info "micro installed to: "$(command -v micro)""
+fi
+
+if ! command -v eget; then
+  _run "curl https://zyedidia.github.io/eget.sh | bash eget.sh" \
+    'Installing: eget'
+
+  [ -f ./eget ] && mv eget /usr/local/bin/ && rm -f eget.sh
+
+  _info "eget installed to: "$(command -v eget)""
+fi
+
+if ! command -v bat ; then
+  _run "eget sharkdp/bat --asset _${arch}.deb && dpkg -i bat_*_*.deb" 'Installing: bat'
+fi
+
+# we need `uv` (a version manager for python), to install isd
+if ! command -v uv ; then
+  export UV_INSTALL_DIR=/usr/local/bin
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  export UV_INSTALL_DIR=
+fi
+
+# sysz is slow & unmaintained, replace it with systemctl-tui
+if ! command -v isd; then
+  UV_TOOL_BIN_DIR=/usr/local/bin uv tool install isd-tui
+
+  _info "installed: https://isd-project.github.io/isd/"
+fi
+
+_info 'essential packages installed'

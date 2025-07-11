@@ -2,16 +2,48 @@
 
 # shellcheck disable=SC2148
 
+_printf () {
+  msg="${1}"
+  color=""
+
+  if [ -z "$2" ]; then
+    color="${fg_bold[$2]}"
+  fi
+
+  printf "${color}$1${reset_color}"
+}
+
 _info () {
-  echo ; echo
-  echo "${fg_bold[blue]}[INSTALLER]${reset_color} $1"
-  echo ; echo
+  echo "${fg_bold[blue]}${1}${reset_color}"
 }
 
 _error () {
-  echo ; echo
-  echo "${fg_bold[red]}[INSTALLER:ERROR]${reset_color} $1"
-  echo ; echo
+  echo "${fg_bold[red]}${1}${reset_color}"
+}
+
+_success () {
+  echo "${fg_bold[green]}${1}${reset_color}"
+}
+
+_run () {
+  if [ -z "${1}" ]; then
+    _error "ERROR: No commands given"
+    return 0
+  fi
+
+  _print "${2} ... "
+
+  lines=$(eval "${1}")
+
+  if [ $? -eq 0 ]; then
+    _success 'DONE'
+  else
+    _error 'FAILED'
+    _error 'Command that has been run:'
+    _error "${1}"
+    _error 'Complete command output:'
+    _error "${lines}"
+  fi
 }
 
 # returns amd64
