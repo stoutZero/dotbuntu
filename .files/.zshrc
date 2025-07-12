@@ -26,49 +26,14 @@ if [ "$(\ls -1 $HOME/.zcompdump* | wc -l | tr -d ' ')" -gt 1 ]; then
   rm -f $HOME/.zcompdump*
 fi
 
-if command -v uv &>/dev/null; then
-  eval "$(uv generate-shell-completion zsh)"
-  eval "$(uvx --generate-shell-completion zsh)"
-fi
-
 [[ -s ~/.nvm/nvm.sh ]] && source ~/.nvm/nvm.sh \
   && (nvm use default > /dev/null 2>&1) # Load NVM, if exists
 
 # Which plugins would you like to load? (plugins can be found in $ZSH/plugins/*)
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(
-  aliases
-  colored-man-pages
-  colorize
-  command-not-found
-  common-aliases
-  composer
-  copyfile
-  copypath
-  cp
-  docker
-  encode64
-  extract
-  eza
-  fancy-ctrl-z
-  fzf
-  git
-  gh
-  nvm
-  npm
-  safe-paste
-  screen
-  systemd
-)
-
-if [ -d $HOME/.zshd/custom/plugins/nice-exit-code ]; then
-  plugins+=(nice-exit-code)
-fi
-
-if [ -d $HOME/.zshd/custom/plugins/fzf-tab ]; then
-  plugins+=(fzf-tab)
-fi
+typeset -a plugins
+plugins=("${(@f)"$(<.zshd_plugins)"}")
 
 ## these two fzf stuff must be loaded after compinit, but before plugins
 # completions
@@ -96,6 +61,12 @@ fi
 # This loads nvm bash_completion
 [[ -s "$NVM_DIR/bash_completion" ]] && . "$NVM_DIR/bash_completion"
 
+## this must be run after compinit, which inside oh-my-zsh.sh
+if command -v uv &>/dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
+  eval "$(uvx --generate-shell-completion zsh)"
+fi
+
 # Do menu-driven completion.
 zstyle ':completion:*' menu select
 
@@ -118,7 +89,7 @@ zstyle ':omz:plugins:eza' 'show-group' yes
 zstyle ':omz:plugins:eza' 'size-prefix' binary
 
 # pnpm
-export PNPM_HOME=~/.local/share/pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -126,7 +97,7 @@ esac
 # pnpm end
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
-    zprof
+  zprof
 fi
 
 # Load the shell dotfiles, and then some:

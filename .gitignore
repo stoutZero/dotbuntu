@@ -4,8 +4,9 @@
 *
 .gitconfig
 .zshrc
-/.files/.DS_Store
-/.files/extra.sh
+.zshd_plugins
+.files/.DS_Store
+.files/extra.sh
 
 # Whitelist individual items
 !README
