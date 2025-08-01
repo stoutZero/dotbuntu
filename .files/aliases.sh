@@ -24,9 +24,7 @@ fi
 alias dfh='df -h '
 alias duh='du -h '
 
-alias edit='$EDITOR'
-
-alias  e=\$EDITOR' '
+alias e=\$EDITOR' '
 alias empty='truncate -s0 '
 
 if command -v frankenphp > /dev/null 2>&1 ; then
@@ -46,8 +44,8 @@ alias h="fc -l 1"
 # Canonical hex dump; some systems have this symlinked
 command -v hd > /dev/null || alias hd="hexdump -C"
 
-alias history="history"
-alias hs='fc -l 1 | grep --color=auto'
+alias history="\\history "
+alias hs='fc -l 1 | grep --color=auto '
 alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
 
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
@@ -57,10 +55,11 @@ alias j="jobs"
 alias k9='kill -9 '
 
 if command -v eza > /dev/null 2>&1 ; then
-  local _l='eza --follow-symlinks --long --classify --group --all --header --links'
+  export _l='eza --follow-symlinks --long --classify --group --all --header --links'
   alias  l="${_l}"
   alias la="${_l} --all "
   alias lx="${_l} --extended "
+  export _l=
 else
   # -l: long
   # -@: extended when long
@@ -74,6 +73,7 @@ else
   alias  l="${_l}"
   alias la="${_l} -a "
   alias lx="${_l} -@ "
+  export _l=
 fi
 
 alias lns='ln -s'
@@ -84,12 +84,17 @@ alias mv='mv '
 alias myip='wget -O - -q ipv4.icanhazip.com'
 alias myip6='wget -O - -q ipv6.icanhazip.com'
 
-alias ngd='sudo nginx -s stop'
-alias ngr='sudo nginx -s reload'
-alias ngt='sudo nginx -t'
+if command -v nginx; then
+  alias ngd='sudo nginx -s stop'
+  alias ngr='sudo nginx -s reload'
+  alias ngt='sudo nginx -t'
+fi
 
-alias ne='node -e '
-alias nls='npm ls '
+if command -v node; then
+  alias ne='node -e '
+  alias nls='npm ls '
+fi
+
 alias nn='nano '
 
 alias pgf='pgrep -f '
@@ -103,12 +108,16 @@ alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
 
-alias scl='screen -ls '
-alias scr='screen -r '
+if command -v screen; then
+  alias scl='screen -ls '
+  alias scr='screen -r '
+fi
 
-alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
-alias ssh='ssh -o TCPKeepAlive=yes '
 alias sudo='nocorrect sudo '
+
+if command -v ngrep; then
+  alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+fi
 
 # Stopwatch
 alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'

@@ -4,7 +4,7 @@
 
 _printf () { printf "${1}\033[0m" }
 _info () { printf "\033[34mℹ ${1}\n" } # BLUE TEXT
-_warn () { printf "\033[1;31m⚠ ${1}\n" } # BOLD RED TEXT
+_warn () { printf "\033[1;33m⚠ ${1}\n" } # BOLD RED TEXT
 _error () { printf "\033[1;31m✘ ERROR: ${1}\n" } # BOLD RED TEXT
 _success () { printf "\033[1;32m✔ ${1}\n" } # BOLD GREEN TEXT
 
