@@ -33,7 +33,7 @@ fi
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 typeset -a plugins
-plugins=("${(@f)"$(<.zshd_plugins)"}")
+plugins=("${(@f)"$(<$HOME/.zshd_plugins)"}")
 
 ## these two fzf stuff must be loaded after compinit, but before plugins
 # completions
