@@ -15,7 +15,7 @@ alias badge="tput bel"
 alias c='composer '
 alias clone='git clone '
 
-if command -v docker > /dev/null 2>&1 ; then
+if command -v docker &>/dev/null ; then
   alias d='docker '
   alias dc='docker compose '
   alias dcx='docker compose exec '
@@ -27,8 +27,8 @@ alias duh='du -h '
 alias e=\$EDITOR' '
 alias empty='truncate -s0 '
 
-if command -v frankenphp > /dev/null 2>&1 ; then
-	alias fart='frankenphp php-cli ./artisan'
+if command -v frankenphp &>/dev/null ; then
+  alias fart='frankenphp php-cli ./artisan'
 fi
 
 alias fire='dig +short -t txt istheinternetonfire.com'
@@ -42,7 +42,7 @@ alias gp='\git push'
 alias h="fc -l 1"
 
 # Canonical hex dump; some systems have this symlinked
-command -v hd > /dev/null || alias hd="hexdump -C"
+command -v hd &> /dev/null || alias hd="hexdump -C"
 
 alias history="\\history "
 alias hs='fc -l 1 | grep --color=auto '
@@ -54,7 +54,7 @@ alias j="jobs"
 
 alias k9='kill -9 '
 
-if command -v eza > /dev/null 2>&1 ; then
+if command -v eza &>/dev/null ; then
   export _l='eza --follow-symlinks --long --classify --group --all --header --links'
   alias  l="${_l}"
   alias la="${_l} --all "
@@ -84,13 +84,13 @@ alias mv='mv '
 alias myip='wget -O - -q ipv4.icanhazip.com'
 alias myip6='wget -O - -q ipv6.icanhazip.com'
 
-if command -v nginx; then
+if command -v nginx &>/dev/null ; then
   alias ngd='sudo nginx -s stop'
   alias ngr='sudo nginx -s reload'
   alias ngt='sudo nginx -t'
 fi
 
-if command -v node; then
+if command -v node &>/dev/null ; then
   alias ne='node -e '
   alias nls='npm ls '
 fi
@@ -108,14 +108,14 @@ alias relogin='exec $SHELL -l'
 
 alias rmf='rm -f '
 
-if command -v screen; then
+if command -v screen &>/dev/null; then
   alias scl='screen -ls '
   alias scr='screen -r '
 fi
 
 alias sudo='nocorrect sudo '
 
-if command -v ngrep; then
+if command -v ngrep &>/dev/null; then
   alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
 fi
 
@@ -140,6 +140,6 @@ alias map="xargs -n1"
 
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
-	# shellcheck disable=SC2139,SC2140
-	alias "$method"="lwp-request -m '$method'"
+  # shellcheck disable=SC2139,SC2140
+  alias "$method"="lwp-request -m '$method'"
 done

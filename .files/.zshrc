@@ -115,6 +115,6 @@ if [ -s $HOME/.local/bin ]; then
   export -U PATH="$HOME/.local/bin:$PATH"
 fi
 
-if [ -s $HOME/.local/bin ]; then
-  export -U PATH="$HOME/.local/bin:$PATH"
+if [ -s $HOME/bin ]; then
+  export -U PATH="$HOME/bin:$PATH"
 fi
