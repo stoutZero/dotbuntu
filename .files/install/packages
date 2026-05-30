@@ -20,8 +20,9 @@ distro="$(get_distro)"
 
 bindir=/usr/local/bin
 
-_run "Installing azlux/gnos-sockets into ${bindir}/sss" \
-  "curl -sSL https://github.com/azlux/gnos-sockets/raw/refs/heads/master/sss > ${bindir}/sss && chmod a+x ${bindir}/sss"
+_run \
+  "curl -sSL https://github.com/azlux/gnos-sockets/raw/refs/heads/master/sss > ${bindir}/sss && chmod a+x ${bindir}/sss" \
+  "Installing azlux/gnos-sockets into ${bindir}/sss"
 
 cd /tmp/ &>/dev/null
 
@@ -52,8 +53,6 @@ bzip2 \
 curl \
 dnsutils \
 eza \
-fail2ban \
-firewalld \
 fzf \
 git \
 gzip \
@@ -72,13 +71,22 @@ pkgs="$(echo "$pkgs" | tr -d '\n')"
 
 _run "sudo apt-get install -y ${pkgs}" "Installing: ${pkgs} ..."
 
-if ! command -v eget; then
-  _run "curl -sSL https://zyedidia.github.io/eget.sh | bash" \
-    'Installing: eget'
+if ! command -v bin; then
+  if [ ! -f "$HOME/.config/bin/config.json" ]; then
+    echo '{"default_path": "/usr/local/bin"}' > "$HOME/.config/bin/config.json"
+  fi
 
-  [ -f ./eget ] && mv eget /usr/local/bin/ \
-    && rm -f eget.sh \
-    && _info "eget installed to: "$(command -v eget)""
+  bin_v="$(curl -k -sSIL https://github.com/marcosnils/bin/releases/latest \
+    | grep 'location: ' \
+    | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' \
+    | cut -d'v' -f2)"
+
+  wget -O "bin_${bin_v}" "https://github.com/marcosnils/bin/releases/download/v${bin_v}/bin_${bin_v}_linux_amd64"
+
+  chmod a+x ./"bin_${bin_v}"
+  ./"bin_${bin_v}" install --name "bin_${bin_v}_linux_amd64" github.com/marcosnils/bin "$bindir" 2>/dev/null
+
+  rm -f ./"bin_${bin_v}"
 fi
 
 if ! command -v broot; then
@@ -102,25 +110,31 @@ if ! command -v micro ; then
   _run "curl -sSL https://getmic.ro | bash" \
     'Installing: micro'
 
-  _info "micro installed to: "$(command -v micro)""
+  _info 'micro installed!'
 fi
 
-if ! command -v bat ; then
-  _run "eget sharkdp/bat --asset _${arch}.deb && dpkg -i bat_*_*.deb" 'Installing: bat'
-fi
+# if ! command -v bat ; then
+#   _run "eget sharkdp/bat --asset _${arch}.deb && dpkg -i bat_*_*.deb" 'Installing: bat'
+# fi
 
-# we need `uv` (a version manager for python), to install isd
-if ! command -v uv ; then
-  export UV_INSTALL_DIR=/usr/local/bin
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  export UV_INSTALL_DIR=
-fi
-
-# sysz is slow & unmaintained, replace it with systemctl-tui
+# sysz is slow & unmaintained, replace it with isd (systemctl-tui)
 if ! command -v isd; then
-  UV_TOOL_BIN_DIR=/usr/local/bin uv tool install isd-tui
+  _run \
+    "bin install --name isd.x86_64-linux.AppImage github.com/kainctl/isd" \
+    'Installing: isd'
 
-  _info "installed: https://isd-project.github.io/isd/"
+  if [ -f "$bindir/isd.x86_64-linux.AppImage" ]; then
+    ln -s "$bindir/isd.x86_64-linux.AppImage" "$bindir/isd"
+  fi
+
+  _info 'isd installed!'
+fi
+if ! command -v witr; then
+  _run \
+    "bin install -f github.com/pranshuparmar/witr && bin install -f github.com/pranshuparmar/witr --name witr.1 /usr/share/man/man1" \
+    'Installing: witr'
+
+  _info 'witr installed!'
 fi
 
 _info 'essential packages installed'

@@ -101,7 +101,7 @@ alias pgf='pgrep -f '
 alias po='popd '
 alias psx='ps aux '
 
-alias ports='sudo lsof -iTCP -sTCP:LISTEN -P '
+alias ports='sudo ss -tunlp '
 
 # Reload the shell (i.e. invoke as a login shell)
 alias relogin='exec $SHELL -l'

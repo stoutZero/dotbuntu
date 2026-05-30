@@ -1,12 +1,31 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # shellcheck disable=SC2148
 
-_printf () { printf "${1}\033[0m" }
-_info () { printf "\033[34mℹ ${1}\n" } # BLUE TEXT
-_warn () { printf "\033[1;33m⚠ ${1}\n" } # BOLD RED TEXT
-_error () { printf "\033[1;31m✘ ERROR: ${1}\n" } # BOLD RED TEXT
-_success () { printf "\033[1;32m✔ ${1}\n" } # BOLD GREEN TEXT
+_printf () {
+  # shellcheck disable=SC2059
+  printf "${1}\033[0m" ;
+}
+_info () {
+  # BLUE TEXT
+  # shellcheck disable=SC2059
+  _printf "\033[34mℹ ${1}\n" ;
+}
+_warn () {
+  # BOLD RED TEXT
+  # shellcheck disable=SC2059
+  _printf "\033[1;33m⚠ ${1}\n" ;
+}
+_error () {
+  # BOLD RED TEXT
+  # shellcheck disable=SC2059
+  _printf "\033[1;31m✘ ERROR: ${1}\n" ;
+}
+_success () {
+  # BOLD GREEN TEXT
+  # shellcheck disable=SC2059
+  _printf "\033[1;32m✔ ${1}\n" ;
+}
 
 # @description Run a command after printing a message. Prints "DONE" when command succeeds, else error message & command output.
 # @arg $1 string Phrase for prompting to text
@@ -27,6 +46,7 @@ _run () {
 
   lines=$(eval "${1}")
 
+  # shellcheck disable=SC2181
   if [ $? -eq 0 ]; then
     _success 'DONE'
   else
@@ -53,7 +73,7 @@ check_ppa () {
     return 0
   fi
 
-  echo count
+  echo "$count"
 }
 
 # returns amd64
@@ -117,8 +137,7 @@ install_keyring () {
 }
 
 line_in_file () {
-  line="$1"
-  file="$2"
-
-  echo $(grep "$line" "$file" 2>/dev/null | wc -l)
+  # $1 => line
+  # $2 => file
+  grep -c "${1}" "${2}" 2>/dev/null || echo 0
 }

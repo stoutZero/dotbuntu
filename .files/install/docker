@@ -53,33 +53,26 @@ fi
 _info 'installed: docker-ce & co'
 
 if command -v docker > /dev/null 2>&1; then
-  v=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
-    | grep '"tag_name":' \
-    | sed -E 's/.*"v([^"]+)".*/\1/')
+  # v=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" \
+  #   | grep '"tag_name":' \
+  #   | sed -E 's/.*"v([^"]+)".*/\1/')
 
 
-  if ! command -v dive > /dev/null 2>&1 || \
-    [[ "$v" != $(dive version | awk -F' ' '{print $2}') ]]
-  then
-    _run "eget wagoodman/dive --asset _linux_${arch}.deb" 'Downloading wagoodman/dive'
-    _run "dpkg -i dive_${v}_linux_${arch}.deb" 'Installing: wagoodman/dive'
+  # if ! command -v dive > /dev/null 2>&1 || [[ "$v" != $(dive version | awk -F' ' '{print $2}') ]]
+  if ! command -v dive > /dev/null 2>&1; then
+    _run "bin install github.com/wagoodman/dive --name _linux_${arch}.deb" 'Downloading wagoodman/dive'
 
-    sudo rm -f "./dive_${v}_linux_amd64.deb" &>/dev/null
+    sudo dpkg -i "$bindir/dive.deb"
+    sudo rm -f "$bindir/dive.deb" &>/dev/null
 
     _info "dive is installed to: "$(command -v dive)""
   fi
 
   if ! command -v ctop > /dev/null 2>&1; then
-    repo=https://github.com/bcicen/ctop
-    v="$(gh_latest "$repo" | tr -d v)"
+    _run \
+      "bin github.com/bcicen/ctop" \
+      "Installing: ctop"
 
-    _run  "eget bcicen/ctop --asset ctop-${v}-linux-${arch}.deb" "Installing: ctop"
-
-    sudo wget \
-      "$repo/releases/download/v${v}/ctop-${v}-linux-amd64" \
-      -O /usr/local/bin/ctop
-    sudo chmod +x /usr/local/bin/ctop > /dev/null 2>&1
-
-  _info 'installed: ctop'
+    _info 'installed: ctop'
   fi
 fi

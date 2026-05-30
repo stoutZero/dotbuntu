@@ -1,11 +1,8 @@
 #!/usr/bin/env zsh
 
-echo "Please make sure to run this script as root, or with sudo"
-echo "Otherwise this script might fail horribly!"
-
 # Check if the script is running as root
 if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root, or with sudo"
+   echo "This script must be run as root, or with sudo; Otherwise it will fail horribly!"
    exit 1
 fi
 
