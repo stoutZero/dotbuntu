@@ -6,7 +6,98 @@ _completemarks () {
   reply=($(ls "$MARKPATH"))
 }
 
-port () { sudo ss -tunlp | grep ":${1} " ; }
+port() {
+  # Print usage instructions if no arguments are supplied
+  if [ $# -eq 0 ]; then
+    echo "Usage: port PORT"
+    echo ""
+    echo "Examples:"
+    echo "  ports 80   - Filter by target port 80"
+    return 0
+  fi
+
+  ports "${1}"
+}
+ports() {
+  # Print usage instructions if no arguments are supplied
+  if [ $# -eq 0 ]; then
+    echo "Usage: ports [PORT | SEARCH_TERM]"
+    echo "     ports [PORT] [SEARCH_TERM]"
+    echo ""
+    echo "Examples:"
+    echo "  ports    - List all listening ports"
+    echo "  ports 80   - Filter by target port 80"
+    echo "  ports nginx  - Search/highlight rows matching 'nginx'"
+    echo "  ports 443 root - Filter by port 443 and highlight 'root'"
+    return 0
+  fi
+
+  local target_port=""
+  local search_term=""
+
+  # Argument handling logic
+  if [ $# -eq 1 ]; then
+    # Check if the single argument is purely an integer
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+      target_port="$1"
+    else
+      search_term="$1"
+    fi
+  elif [ $# -ge 2 ]; then
+    target_port="$1"
+    search_term="$2"
+  fi
+
+  local ss_cmd=("sudo" "ss" "-tunlp")
+
+  # Filter natively by source (listening) port if provided
+  if [ -n "$target_port" ]; then
+    ss_cmd+=("sport = :$target_port")
+  fi
+
+  # Print the table header
+  printf "%-8s %-12s %-24s %-10s %-35s %-30s\n" \
+    "PROTO" "STATE" "LOCAL ADDRESS" "USER" "PROCESS" "FD_CWD"
+  printf "%s\n" "------------------------------------------------------------------------------------------------------------------------"
+
+  # Execute ss and process lines
+  "${ss_cmd[@]}" 2>/dev/null | awk 'NR > 1 {
+    print $1, $2, $5, $0
+  }' | while read -r proto state local full_line; do
+
+    # Extract PID and FD from the process info column
+    pid=$(echo "$full_line" | grep -oP 'pid=\K[0-9]+' | head -n 1)
+    fd=$(echo "$full_line" | grep -oP 'fd=\K[0-9]+' | head -n 1)
+
+    if [ -n "$pid" ] && [ -d "/proc/$pid" ]; then
+      proc_user=$(ps -o user= -p "$pid" 2>/dev/null | tr -d ' ')
+      proc_path=$(readlink -f "/proc/$pid/exe" 2>/dev/null || echo "unknown")
+      proc_cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null || echo "unknown")
+    else
+      proc_user="unknown"
+      proc_path="unknown"
+      proc_cwd="unknown"
+      pid="N/A"
+      fd="N/A"
+    fi
+
+    process_col="(${pid}) ${proc_path}"
+    fd_cwd_col="(${fd}) ${proc_cwd}"
+
+    # Format row line
+    row_output=$(printf "%-8s %-12s %-24s %-10s %-35s %-30s" \
+      "$proto" "$state" "$local" "$proc_user" "$process_col" "$fd_cwd_col")
+
+    # Apply search term filtering and highlight matching terms if provided
+    if [ -n "$search_term" ]; then
+      if echo "$row_output" | grep -qi "$search_term"; then
+        echo "$row_output" | sed -E "s/($search_term)/\x1b[1;31m\1\x1b[0m/gi"
+      fi
+    else
+      echo "$row_output"
+    fi
+  done
+}
 
 psg () { pgrep -x "${1}" | xargs -r ps -o user,pid,time,args -p ; }
 
@@ -466,7 +557,7 @@ reload () { sudo systemctl "reload" "$@" ; }
 restart () { sudo systemctl "restart" "$@" ; }
 list_svc () { sudo systemctl list-units --type=service --all | cat ; }
 
-if command -v compctl ; then
+if command -v compctl>/dev/null ; then
   compctl -K _completemarks jump
   compctl -K _completemarks unmark
 fi

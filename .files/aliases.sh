@@ -23,6 +23,7 @@ fi
 
 alias dfh='df -h '
 alias duh='du -h '
+alias dtop="docker run -v /var/run/docker.sock:/var/run/docker.sock -it ghcr.io/amir20/dtop"
 
 alias e=\$EDITOR' '
 alias empty='truncate -s0 '
@@ -100,8 +101,6 @@ alias nn='nano '
 alias pgf='pgrep -f '
 alias po='popd '
 alias psx='ps aux '
-
-alias ports='sudo ss -tunlp '
 
 # Reload the shell (i.e. invoke as a login shell)
 alias relogin='exec $SHELL -l'
