@@ -25,7 +25,7 @@ alias dfh='df -h '
 alias duh='du -h '
 alias dtop="docker run -v /var/run/docker.sock:/var/run/docker.sock -it ghcr.io/amir20/dtop"
 
-alias e=\$EDITOR' '
+alias ed=\$EDITOR' '
 alias empty='truncate -s0 '
 
 if command -v frankenphp &>/dev/null ; then
