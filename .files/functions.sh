@@ -19,16 +19,19 @@ port() {
   ports "${1}"
 }
 ports() {
-  # Print usage instructions if no arguments are supplied
-  if [ $# -eq 0 ]; then
-    echo "Usage: ports [PORT | SEARCH_TERM]"
+  # Print usage instructions if help flag is supplied or no arguments are supplied
+  if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: ports"
+    echo "     ports [PORT | SEARCH_TERM]"
     echo "     ports [PORT] [SEARCH_TERM]"
+    echo "     ports [-h | --help]"
     echo ""
     echo "Examples:"
     echo "  ports    - List all listening ports"
     echo "  ports 80   - Filter by target port 80"
     echo "  ports nginx  - Search/highlight rows matching 'nginx'"
     echo "  ports 443 root - Filter by port 443 and highlight 'root'"
+    echo "  ports -h   - Show this help message"
     return 0
   fi
 
@@ -64,11 +67,11 @@ ports() {
   "${ss_cmd[@]}" 2>/dev/null | awk 'NR > 1 {
     print $1, $2, $5, $0
   }' | while read -r proto state local full_line; do
-
+    
     # Extract PID and FD from the process info column
     pid=$(echo "$full_line" | grep -oP 'pid=\K[0-9]+' | head -n 1)
     fd=$(echo "$full_line" | grep -oP 'fd=\K[0-9]+' | head -n 1)
-
+    
     if [ -n "$pid" ] && [ -d "/proc/$pid" ]; then
       proc_user=$(ps -o user= -p "$pid" 2>/dev/null | tr -d ' ')
       proc_path=$(readlink -f "/proc/$pid/exe" 2>/dev/null || echo "unknown")
