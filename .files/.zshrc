@@ -22,8 +22,9 @@ export CHEATCOLORS=true
 # Uncomment following line if you want red dots to be displayed while waiting for completion
 COMPLETION_WAITING_DOTS="true"
 
-if [ "$(\ls -1 $HOME/.zcompdump* | wc -l | tr -d ' ')" -gt 1 ]; then
-  rm -f $HOME/.zcompdump*
+# shellcheck disable=SC2012
+if [ "$(\ls -1 "$HOME/.zcompdump"* | wc -l | tr -d ' ')" -gt 1 ]; then
+  rm -f "$HOME/.zcompdump"*
 fi
 
 [[ -s ~/.nvm/nvm.sh ]] && source ~/.nvm/nvm.sh \
@@ -33,14 +34,14 @@ fi
 # Custom plugins may be added to $ZSH/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 typeset -a plugins
-plugins=("${(@f)"$(<$HOME/.zshd_plugins)"}")
+plugins=("${(@f)"$(<"$HOME/.zshd_plugins")"}")
 
 ## these two fzf stuff must be loaded after compinit, but before plugins
 # completions
-[[ -f $HOME/.fzf.zsh ]] && source $HOME/.fzf.zsh
+[[ -f $HOME/.fzf.zsh ]] && source "$HOME/.fzf.zsh"
 
 # bash and zsh key bindings for Git objects
-[[ -s $HOME/.fzf-git.sh/fzf-git.sh ]] && source $HOME/.fzf-git.sh/fzf-git.sh
+[[ -s $HOME/.fzf-git.sh/fzf-git.sh ]] && source "$HOME/.fzf"-git.sh/fzf-git.sh
 
 # it's highly discouraged to run both firewalld & ufw in the same system
 if command -v firewall-cmd &>/dev/null && [[ ! -x $(command -v ufw 2>/dev/null) ]]; then
@@ -108,6 +109,9 @@ do
   [ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file
+
+# Make micro the default editor
+export EDITOR="micro";
 
 [ -s $HOME/.local/bin/env ] && source $HOME/.local/bin/env
 

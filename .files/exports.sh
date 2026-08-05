@@ -1,9 +1,6 @@
 # shellcheck disable=SC2148
 # SC2148: Tips
 
-# Make nano the default editor
-export EDITOR="nano";
-
 export HISTSIZE=1000000000
 export SAVEHIST=$HISTSIZE
 export HISTFILESIZE=$HISTSIZE;

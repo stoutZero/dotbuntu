@@ -555,7 +555,10 @@ status () { sudo systemctl "status" "$@" ; }
 stop () { sudo systemctl "stop" "$@" ; }
 reload () { sudo systemctl "reload" "$@" ; }
 restart () { sudo systemctl "restart" "$@" ; }
-list_svc () { sudo systemctl list-units --type=service --all | cat ; }
+
+list_svc () {
+  sudo systemctl list-units --type=service --all | cat
+}
 
 if command -v compctl>/dev/null ; then
   compctl -K _completemarks jump
